@@ -1,0 +1,47 @@
+{
+    "name": "flagbit/magento2-transaction-mail-extender",
+    "description": "Extends Magento 2 transaction mails with a Schema.org conform HTML content",
+    "type": "magento2-module",
+    "authors": [
+        {
+            "name": "Michael Vogel",
+            "email": "michael.vogel@flagbit.de",
+            "role": "Developer"
+        }
+    ],
+    "homepage": "https://github.com/flagbit/magento2-transaction-mail-extender",
+    "keywords": [
+        "magento",
+        "magento2",
+        "transaction",
+        "mail",
+        "extender",
+        "schema.org"
+    ],
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "https://repo.magento.com/"
+        }
+    ],
+    "require": {
+        "php": ">=7.1.0",
+        "magento/framework": ">=101.0.0",
+        "magento/module-backend": ">=100.2.0",
+        "magento/magento-composer-installer": "*"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^7.5",
+    },
+    "autoload": {
+        "files": [
+            "registration.php"
+        ],
+        "psr-4": {
+            "Flagbit\\TransactionMailExtender\\": ""
+        }
+    },
+    "config": {
+        "sort-packages": true
+    }
+}
