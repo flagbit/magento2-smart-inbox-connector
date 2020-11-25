@@ -28,7 +28,7 @@
                 <field id="enable"
                        translate="label"
                        type="select"
-                       sortOrder="1"
+                       sortOrder="10"
                        showInDefault="1"
                        showInWebsite="1"
                        showInStore="1">
@@ -37,13 +37,35 @@
                 </field>
                 <field id="order_status_matrix"
                        translate="label"
-                       sortOrder="2"
+                       sortOrder="20"
                        showInDefault="1"
                        showInWebsite="1"
                        showInStore="1">
                     <label>Order Status Matrix</label>
                     <frontend_model>Flagbit\TransactionMailExtender\Block\Adminhtml\Form\Field\OrderStatusMatrix</frontend_model>
                     <backend_model>Magento\Config\Model\Config\Backend\Serialized\ArraySerialized</backend_model>
+                </field>
+                <field id="order_emails"
+                       translate="label"
+                       type="multiselect"
+                       sortOrder="30"
+                       showInDefault="1"
+                       showInWebsite="1"
+                       showInStore="1">
+                    <label>Order Emails</label>
+                    <source_model>Flagbit\TransactionMailExtender\Block\Adminhtml\Form\Field\MultiSelectEmail</source_model>
+                    <comment>The email templates which should be extended with order information.</comment>
+                </field>
+                <field id="parcel_delivery_emails"
+                       translate="label"
+                       type="multiselect"
+                       sortOrder="40"
+                       showInDefault="1"
+                       showInWebsite="1"
+                       showInStore="1">
+                    <label>Parcel Delivery Emails</label>
+                    <source_model>Flagbit\TransactionMailExtender\Block\Adminhtml\Form\Field\MultiSelectEmail</source_model>
+                    <comment>The email templates which should be extended with shipping information.</comment>
                 </field>
             </group>
         </section>
