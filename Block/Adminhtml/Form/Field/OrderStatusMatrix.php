@@ -19,6 +19,8 @@ class OrderStatusMatrix extends AbstractFieldArray
     private $statusCollectionFactory;
     /** @var DataObjectFactory $dataObjectFactory */
     private $dataObjectFactory;
+    /** @var MageStatusColumn $mageStatusRenderer */
+    private $mageStatusRenderer;
 
     public function __construct(
         Context $context,
@@ -74,7 +76,7 @@ class OrderStatusMatrix extends AbstractFieldArray
             self::MAGE_STATUS_KEY,
             [
                 'label' => __('Magento Status'),
-                'class' => 'required-entry',
+                'renderer' => $this->getMageStatusRenderer(),
             ]
         );
         $this->addColumn(
@@ -103,7 +105,7 @@ class OrderStatusMatrix extends AbstractFieldArray
     }
 
     /**
-     * Get Schema orc status renderer
+     * Get Schema org status renderer
      *
      * @return SchemaOrgStatusColumn
      */
@@ -118,6 +120,24 @@ class OrderStatusMatrix extends AbstractFieldArray
         }
 
         return $this->schemaOrgStatusRenderer;
+    }
+
+    /**
+     * Get mage status renderer
+     *
+     * @return MageStatusColumn
+     */
+    private function getMageStatusRenderer()
+    {
+        if (!$this->mageStatusRenderer) {
+            $this->mageStatusRenderer = $this->getLayout()->createBlock(
+                MageStatusColumn::class,
+                '',
+                ['data' => ['is_render_to_js_template' => true]]
+            );
+        }
+
+        return $this->mageStatusRenderer;
     }
 
     /**
