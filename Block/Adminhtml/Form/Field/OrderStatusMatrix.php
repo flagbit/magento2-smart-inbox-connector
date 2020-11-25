@@ -31,6 +31,7 @@ class OrderStatusMatrix extends AbstractFieldArray
         $this->statusCollectionFactory = $statusCollectionFactory;
         $this->dataObjectFactory = $dataObjectFactory;
         parent::__construct($context, $data);
+        $this->_template = 'Flagbit_TransactionMailExtender::system/config/form/field/array.phtml';
     }
 
     /**
