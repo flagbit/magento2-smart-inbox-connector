@@ -35,6 +35,16 @@
                     <label>Module Enable</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
+                <field id="order_status_matrix"
+                       translate="label"
+                       sortOrder="2"
+                       showInDefault="1"
+                       showInWebsite="1"
+                       showInStore="1">
+                    <label>Order Status Matrix</label>
+                    <frontend_model>Flagbit\TransactionMailExtender\Block\Adminhtml\Form\Field\OrderStatusMatrix</frontend_model>
+                    <backend_model>Magento\Config\Model\Config\Backend\Serialized\ArraySerialized</backend_model>
+                </field>
             </group>
         </section>
     </system>
