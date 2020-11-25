@@ -51,12 +51,6 @@ $_colspan = $block->isAddAfter() ? 2 : 1;
                     + '<\/td>'
                     <?php endforeach; ?>
 
-                    <?php if ($block->isAddAfter()) : ?>
-                    + '<td><button class="action-add" type="button" id="addAfterBtn<%- _id %>"><span>'
-                    + '<?= $block->escapeJs($block->escapeHtml(__('Add after'))) ?>'
-                    + '<\/span><\/button><\/td>'
-                    <?php endif; ?>
-
                     + '<\/tr>'
                 ),
 
