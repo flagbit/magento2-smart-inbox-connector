@@ -13,8 +13,8 @@ class OrderStatusMatrix extends AbstractFieldArray
     private const MAGE_STATUS_KEY = 'mage_status';
     private const SCHEMA_ORG_STATUS_KEY = 'schema_org_status';
 
-    /** @var SchemaOrgStatusColumn $orderStatusRenderer */
-    private $orderStatusRenderer;
+    /** @var SchemaOrgStatusColumn $schemaOrgStatusRenderer */
+    private $schemaOrgStatusRenderer;
     /** @var CollectionFactory $statusCollectionFactory */
     private $statusCollectionFactory;
     /** @var DataObjectFactory $dataObjectFactory */
@@ -81,7 +81,7 @@ class OrderStatusMatrix extends AbstractFieldArray
             self::SCHEMA_ORG_STATUS_KEY,
             [
                 'label'    => __('Schema.org Status'),
-                'renderer' => 'required-entry',
+                'renderer' => $this->getSchemaOrgStatusRenderer(),
             ]
         );
         $this->_addAfter       = false;
@@ -109,15 +109,15 @@ class OrderStatusMatrix extends AbstractFieldArray
      */
     private function getSchemaOrgStatusRenderer()
     {
-        if (!$this->orderStatusRenderer) {
-            $this->orderStatusRenderer = $this->getLayout()->createBlock(
+        if (!$this->schemaOrgStatusRenderer) {
+            $this->schemaOrgStatusRenderer = $this->getLayout()->createBlock(
                 SchemaOrgStatusColumn::class,
                 '',
                 [ 'data' => [ 'is_render_to_js_template' => true ] ]
             );
         }
 
-        return $this->orderStatusRenderer;
+        return $this->schemaOrgStatusRenderer;
     }
 
     /**
