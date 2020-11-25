@@ -20,15 +20,6 @@ $_colspan = $block->isAddAfter() ? 2 : 1;
                 <?php endforeach; ?>
             </tr>
             </thead>
-            <tfoot>
-            <tr>
-                <td colspan="<?= count($block->getColumns())+$_colspan ?>" class="col-actions-add">
-                    <button id="addToEndBtn<?= $block->escapeHtmlAttr($_htmlId) ?>" class="action-add" title="<?= $block->escapeHtmlAttr(__('Add')) ?>" type="button">
-                        <span><?= $block->escapeHtml($block->getAddButtonLabel()) ?></span>
-                    </button>
-                </td>
-            </tr>
-            </tfoot>
             <tbody id="addRow<?= $block->escapeHtmlAttr($_htmlId) ?>"></tbody>
         </table>
     </div>
@@ -88,25 +79,12 @@ $_colspan = $block->isAddAfter() ? 2 : 1;
                             }
                         }
                     }
-
-                    // Add event for {addAfterBtn} button
-                    <?php if ($block->isAddAfter()) : ?>
-                    Event.observe('addAfterBtn' + templateValues._id, 'click', this.add.bind(this, false, templateValues._id));
-                    <?php endif; ?>
                 },
 
                 del: function(rowId) {
                     $(rowId).remove();
                 }
             }
-
-            // bind add action to "Add" button in last row
-            Event.observe('addToEndBtn<?= $block->escapeJs($_htmlId) ?>',
-                'click',
-                arrayRow<?= $block->escapeJs($_htmlId) ?>.add.bind(
-                    arrayRow<?= $block->escapeJs($_htmlId) ?>, false, false
-                )
-            );
 
             // add existing rows
             <?php
