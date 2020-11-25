@@ -10,6 +10,7 @@ use Magento\Sales\Api\Data\ShipmentInterface;
 class Template extends MageTemplate
 {
     private const CONFIG_PATH = 'transaction_mail_extender/general/';
+    private const MODULE_ENABLED = 'enable';
     private const PARCEL_DELIVERY_EMAILS = 'parcel_delivery_emails';
     private const ORDER_EMAILS = 'order_emails';
     private const ORDER_STATUS_MATRIX = 'order_status_matrix';
@@ -22,6 +23,11 @@ class Template extends MageTemplate
     public function processTemplate()
     {
         $text = parent::processTemplate();
+        if (!$this->getModuleEnabled()) {
+            return $text;
+        }
+
+        $this->fetchOrderAndShipment();
 
         // @TODO extend email body if needed
 
@@ -99,14 +105,25 @@ class Template extends MageTemplate
     }
 
     /**
+     * Is the module enabled
+     *
+     * @return bool
+     * @throws NoSuchEntityException
+     */
+    private function getModuleEnabled(): bool
+    {
+        return (bool)$this->getConfigValue(self::MODULE_ENABLED);
+    }
+
+    /**
      * Get a specific config value
      *
      * @param string $key
      *
-     * @return string
+     * @return string|null
      * @throws NoSuchEntityException
      */
-    private function getConfigValue(string $key): string
+    private function getConfigValue(string $key)
     {
         return $this->scopeConfig->getValue(
             self::CONFIG_PATH . $key,
