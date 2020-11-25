@@ -15,8 +15,6 @@ class OrderStatusMatrix extends AbstractFieldArray
 
     /** @var SchemaOrgColumn $orderStatusRenderer */
     private $orderStatusRenderer;
-
-
     /** @var CollectionFactory $statusCollectionFactory */
     private $statusCollectionFactory;
     /** @var DataObjectFactory $dataObjectFactory */
@@ -32,6 +30,39 @@ class OrderStatusMatrix extends AbstractFieldArray
         $this->dataObjectFactory = $dataObjectFactory;
         parent::__construct($context, $data);
         $this->_template = 'Flagbit_TransactionMailExtender::system/config/form/field/array.phtml';
+    }
+
+    /**
+     * Obtain existing data from form element
+     *
+     * Each row will be instance of \Magento\Framework\DataObject
+     *
+     * @return array
+     */
+    public function getArrayRows()
+    {
+        $oldArrayRows = parent::getArrayRows();
+
+
+        /** @var DataObject[] $temporarilyRows */
+        $temporarilyRows = [];
+        foreach ($oldArrayRows as $key => $oldRow) {
+            $oldRow->setData('key', $key);
+            $temporarilyRows[$oldRow->getData(self::MAGE_STATUS_KEY)] = $oldRow;
+        }
+
+        $resultRows = [];
+        foreach ($this->getMageStatusOptions() as $mageOrderStatus) {
+            if (array_key_exists($mageOrderStatus['value'], $temporarilyRows)) {
+                $dataObject = $temporarilyRows[$mageOrderStatus['value']];
+            } else {
+                $dataObject = $this->createNewDataObject($mageOrderStatus['value']);
+            }
+            $this->_prepareArrayRow($dataObject);
+            $resultRows[$dataObject->getData('_id')] = $dataObject;
+        }
+
+        return $resultRows;
     }
 
     /**
@@ -87,39 +118,6 @@ class OrderStatusMatrix extends AbstractFieldArray
         }
 
         return $this->orderStatusRenderer;
-    }
-
-    /**
-     * Obtain existing data from form element
-     *
-     * Each row will be instance of \Magento\Framework\DataObject
-     *
-     * @return array
-     */
-    public function getArrayRows()
-    {
-        $oldArrayRows = parent::getArrayRows();
-
-
-        /** @var DataObject[] $temporarilyRows */
-        $temporarilyRows = [];
-        foreach ($oldArrayRows as $key => $oldRow) {
-            $oldRow->setData('key', $key);
-            $temporarilyRows[$oldRow->getData(self::MAGE_STATUS_KEY)] = $oldRow;
-        }
-
-        $resultRows = [];
-        foreach ($this->getMageStatusOptions() as $mageOrderStatus) {
-            if (array_key_exists($mageOrderStatus['value'], $temporarilyRows)) {
-                $dataObject = $temporarilyRows[$mageOrderStatus['value']];
-            } else {
-                $dataObject = $this->createNewDataObject($mageOrderStatus['value']);
-            }
-            $this->_prepareArrayRow($dataObject);
-            $resultRows[$dataObject->getData('_id')] = $dataObject;
-        }
-
-        return $resultRows;
     }
 
     /**
