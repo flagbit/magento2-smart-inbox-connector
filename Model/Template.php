@@ -3,11 +3,17 @@
 namespace Flagbit\TransactionMailExtender\Model;
 
 use Magento\Email\Model\Template as MageTemplate;
+use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Sales\Api\Data\ShipmentInterface;
 
 class Template extends MageTemplate
 {
+    private const CONFIG_PATH = 'transaction_mail_extender/general/';
+    private const PARCEL_DELIVERY_EMAILS = 'parcel_delivery_emails';
+    private const ORDER_EMAILS = 'order_emails';
+    private const ORDER_STATUS_MATRIX = 'order_status_matrix';
+
     /** @var OrderInterface */
     private $order;
     /** @var Shipmentinterface */
@@ -57,5 +63,55 @@ class Template extends MageTemplate
         }
 
         return $subject;
+    }
+
+    /**
+     * Get the order status matrix
+     *
+     * @return array
+     * @throws NoSuchEntityException
+     */
+    private function getOrderStatusMatrix()
+    {
+        return json_decode($this->getConfigValue(self::ORDER_STATUS_MATRIX));
+    }
+
+    /**
+     * Get the email ids on which should be extended with the order information
+     *
+     * @return array
+     * @throws NoSuchEntityException
+     */
+    private function getOrderEmails(): array
+    {
+        return explode(',', $this->getConfigValue(self::ORDER_EMAILS));
+    }
+
+    /**
+     * Get the email ids on which should be extended with the parcel delivery information
+     *
+     * @return array
+     * @throws NoSuchEntityException
+     */
+    private function getParcelDeliveryEmails(): array
+    {
+        return explode(',', $this->getConfigValue(self::PARCEL_DELIVERY_EMAILS));
+    }
+
+    /**
+     * Get a specific config value
+     *
+     * @param string $key
+     *
+     * @return string
+     * @throws NoSuchEntityException
+     */
+    private function getConfigValue(string $key): string
+    {
+        return $this->scopeConfig->getValue(
+            self::CONFIG_PATH . $key,
+            'store',
+            $this->storeManager->getStore()->getId()
+        );
     }
 }
