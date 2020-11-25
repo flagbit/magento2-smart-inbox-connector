@@ -4,7 +4,7 @@ namespace Flagbit\TransactionMailExtender\Block\Adminhtml\Form\Field;
 
 use Magento\Framework\View\Element\Html\Select;
 
-class SchemaOrgColumn extends Select
+class SchemaOrgStatusColumn extends Select
 {
     /**
      * Set "name" for <select> element
