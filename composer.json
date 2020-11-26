@@ -22,6 +22,10 @@
         {
             "type": "composer",
             "url": "https://repo.magento.com/"
+        },
+        {
+            "type": "vcs",
+            "url": "git@github.com:flagbit/schemaorg-mail-body.git"
         }
     ],
     "require": {
