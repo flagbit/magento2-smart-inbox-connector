@@ -1,6 +1,6 @@
 <?php
 
-namespace Flagbit\TransactionMailExtender\Block\Adminhtml\Form\Field;
+namespace EinsUndEins\TransactionMailExtender\Block\Adminhtml\Form\Field;
 
 use Magento\Framework\View\Element\AbstractBlock;
 

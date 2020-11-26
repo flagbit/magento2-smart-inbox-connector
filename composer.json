@@ -43,7 +43,7 @@
             "registration.php"
         ],
         "psr-4": {
-            "Flagbit\\TransactionMailExtender\\": ""
+            "EinsUndEins\\TransactionMailExtender\\": ""
         }
     },
     "config": {

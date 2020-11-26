@@ -16,7 +16,7 @@
             <class>separator-top</class>
             <label>Transaction Mail Extender</label>
             <tab>1und1</tab>
-            <resource>Flagbit_TransactionMailExtender::config</resource>
+            <resource>EinsUndEins_TransactionMailExtender::config</resource>
             <group id="general"
                    translate="label"
                    type="text"
@@ -42,7 +42,7 @@
                        showInWebsite="1"
                        showInStore="1">
                     <label>Order Status Matrix</label>
-                    <frontend_model>Flagbit\TransactionMailExtender\Block\Adminhtml\Form\Field\OrderStatusMatrix</frontend_model>
+                    <frontend_model>EinsUndEins\TransactionMailExtender\Block\Adminhtml\Form\Field\OrderStatusMatrix</frontend_model>
                     <backend_model>Magento\Config\Model\Config\Backend\Serialized\ArraySerialized</backend_model>
                 </field>
                 <field id="order_emails"
@@ -53,7 +53,7 @@
                        showInWebsite="1"
                        showInStore="1">
                     <label>Order Emails</label>
-                    <source_model>Flagbit\TransactionMailExtender\Block\Adminhtml\Form\Field\MultiSelectEmail</source_model>
+                    <source_model>EinsUndEins\TransactionMailExtender\Block\Adminhtml\Form\Field\MultiSelectEmail</source_model>
                     <comment>The email templates which should be extended with order information.</comment>
                 </field>
                 <field id="parcel_delivery_emails"
@@ -64,7 +64,7 @@
                        showInWebsite="1"
                        showInStore="1">
                     <label>Parcel Delivery Emails</label>
-                    <source_model>Flagbit\TransactionMailExtender\Block\Adminhtml\Form\Field\MultiSelectEmail</source_model>
+                    <source_model>EinsUndEins\TransactionMailExtender\Block\Adminhtml\Form\Field\MultiSelectEmail</source_model>
                     <comment>The email templates which should be extended with shipping information.</comment>
                 </field>
             </group>

@@ -1,6 +1,6 @@
 <?php
 
-namespace Flagbit\TransactionMailExtender\Model;
+namespace EinsUndEins\TransactionMailExtender\Model;
 
 use Magento\Email\Model\Template as MageTemplate;
 use Magento\Framework\Exception\NoSuchEntityException;
