@@ -5,7 +5,7 @@ namespace EinsUndEins\TransactionMailExtender\Block\Adminhtml\Form\Field;
 use EinsUndEins\SchemaOrgMailBody\Model\AbstractOrderInterface;
 use Magento\Framework\View\Element\Html\Select;
 
-class SchemaOrgStatusColumn extends Select
+class SchemaOrgStatusSelect extends Select
 {
     /**
      * Set "name" for <select> element
