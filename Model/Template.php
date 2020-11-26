@@ -6,6 +6,7 @@ use EinsUndEins\SchemaOrgMailBody\Model\Order;
 use EinsUndEins\SchemaOrgMailBody\Model\ParcelDelivery;
 use EinsUndEins\SchemaOrgMailBody\Renderer\OrderRenderer;
 use EinsUndEins\SchemaOrgMailBody\Renderer\ParcelDeliveryRenderer;
+use EinsUndEins\TransactionMailExtender\Block\Adminhtml\Form\Field\OrderStatusMatrix;
 use Exception;
 use InvalidArgumentException;
 use Magento\Email\Model\Template as MageTemplate;
@@ -177,8 +178,13 @@ class Template extends MageTemplate
      */
     private function getOrderStatusMatrix()
     {
-        return json_decode($this->getConfigValue(self::ORDER_STATUS_MATRIX));
-        // @TODO give it as array back
+        $origin = json_decode($this->getConfigValue(self::ORDER_STATUS_MATRIX));
+        $remapped = [];
+        foreach ($origin as $entry) {
+            $remapped[$entry->{OrderStatusMatrix::MAGE_STATUS_KEY}] = $entry->{OrderStatusMatrix::SCHEMA_ORG_STATUS_KEY};
+        }
+
+        return $remapped;
     }
 
     /**

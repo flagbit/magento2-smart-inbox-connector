@@ -10,8 +10,8 @@ use Magento\Sales\Model\ResourceModel\Order\Status\CollectionFactory;
 
 class OrderStatusMatrix extends AbstractFieldArray
 {
-    private const MAGE_STATUS_KEY = 'mage_status';
-    private const SCHEMA_ORG_STATUS_KEY = 'schema_org_status';
+    public const MAGE_STATUS_KEY = 'mage_status';
+    public const SCHEMA_ORG_STATUS_KEY = 'schema_org_status';
 
     /** @var SchemaOrgStatusSelect $schemaOrgStatusRenderer */
     private $schemaOrgStatusRenderer;
