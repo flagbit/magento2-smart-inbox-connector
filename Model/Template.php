@@ -4,6 +4,8 @@ namespace EinsUndEins\TransactionMailExtender\Model;
 
 use EinsUndEins\SchemaOrgMailBody\Model\Order;
 use EinsUndEins\SchemaOrgMailBody\Model\ParcelDelivery;
+use EinsUndEins\SchemaOrgMailBody\Renderer\OrderRenderer;
+use EinsUndEins\SchemaOrgMailBody\Renderer\ParcelDeliveryRenderer;
 use InvalidArgumentException;
 use Magento\Email\Model\Template as MageTemplate;
 use Magento\Framework\Exception\NoSuchEntityException;
@@ -84,9 +86,46 @@ class Template extends MageTemplate
         return $text;
     }
 
+    /**
+     * Render the shipment information in valid schema.org html and add it to the text
+     *
+     * @param string $text
+     *
+     * @return string
+     */
     private function extendParcelDeliveryData(string $text): string
     {
-        // @TODO handle text
+        if ($this->shipment) {
+            $this->_logger->error('Couldn\'t get shipment from the email variables');
+
+            return $text;
+        }
+
+        $mageOrderStatus = $this->shipment->getOrder()->getStatus();
+        $orderStatus = $this->getOrderStatusMatrix()[$mageOrderStatus];
+        if (!$orderStatus) {
+            $this->_logger->error('Magento order status not configured to schema.org order status.', $mageOrderStatus);
+
+            return $text;
+        }
+        $orderNumber = $this->shipment->getOrderId();
+        $shopName = $this->shipment->getStore()->getName();
+        foreach ($this->shipment->getTracksCollection() as $track) {
+            $deliveryName = $track->getTitle();
+            $trackingNumber = $track->getTrackNumber();
+
+            try {
+                $parcelDelivery = new ParcelDelivery($deliveryName, $trackingNumber, $orderNumber, $orderStatus, $shopName);
+            } catch (InvalidArgumentException $e) {
+                $this->_logger->error($e->getMessage());
+
+                continue;
+            }
+
+            $parcelDeliveryRenderer = new ParcelDeliveryRenderer($parcelDelivery);
+            $extension = $parcelDeliveryRenderer->render();
+            $text = self::replaceLast('</body>', $extension . '</body>', $text);
+        }
 
         return $text;
     }
