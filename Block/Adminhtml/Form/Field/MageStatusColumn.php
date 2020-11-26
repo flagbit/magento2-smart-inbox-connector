@@ -16,7 +16,7 @@ class MageStatusColumn extends AbstractBlock
         $column = $this->getColumn();
         return '<input type="text" id="' . $this->getInputId() . '"' .
             ' name="' .
-            $this->getInputName() .
+            $this->getName() .
             '" value="<%- ' .
             $this->getColumnName() .
             ' %>" ' .
@@ -27,6 +27,6 @@ class MageStatusColumn extends AbstractBlock
             (isset($column['class'])
                 ? $column['class']
                 : 'input-text') . '"' . (isset($column['style']) ? ' style="' . $column['style'] . '"' : '')
-            . 'readonly />';
+            . ' readonly />';
     }
 }
