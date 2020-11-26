@@ -2,6 +2,7 @@
 
 namespace Flagbit\TransactionMailExtender\Block\Adminhtml\Form\Field;
 
+use EinsUndEins\SchemaOrgMailBody\Model\AbstractOrderInterface;
 use Magento\Framework\View\Element\Html\Select;
 
 class SchemaOrgStatusColumn extends Select
@@ -51,10 +52,11 @@ class SchemaOrgStatusColumn extends Select
      */
     public function getSourceOptions(): array
     {
-        // @TODO add possible schema org order status
-        return [
-            ['label' => 'OrderCanceled', 'value' => 'OrderCanceled'],
-            ['label' => 'OrderPending', 'value' => 'OrderPending']
-        ];
+        $result = [];
+        foreach (AbstractOrderInterface::POSSIBLE_ORDER_STATUS as $orderStatus) {
+            $result[] = ['label' => $orderStatus, 'value' =>$orderStatus];
+        }
+
+        return $result;
     }
 }
