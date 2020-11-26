@@ -2,6 +2,9 @@
 
 namespace EinsUndEins\TransactionMailExtender\Model;
 
+use EinsUndEins\SchemaOrgMailBody\Model\Order;
+use EinsUndEins\SchemaOrgMailBody\Model\ParcelDelivery;
+use InvalidArgumentException;
 use Magento\Email\Model\Template as MageTemplate;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Sales\Api\Data\OrderInterface;
@@ -29,7 +32,61 @@ class Template extends MageTemplate
 
         $this->fetchOrderAndShipment();
 
-        // @TODO extend email body if needed
+        if (in_array($this->getOrderEmails(), $this->getId())) {
+            $text = $this->extendOrderData($text);
+        }
+
+        if (in_array($this->getParcelDeliveryEmails(), $this->getId())) {
+            $text = $this->extendParcelDeliveryData($text);
+        }
+
+        return $text;
+    }
+
+    /**
+     * Render the order information in valid schema.org html and add it to the text
+     *
+     * @param string $text
+     *
+     * @return string
+     */
+    private function extendOrderData(string $text): string
+    {
+        if ($this->order) {
+            $this->_logger->error('Couldn\'t get order from the email variables');
+
+            return $text;
+        }
+
+        $orderNumber = $this->order->getId();
+        $mageOrderStatus = $this->order->getStatus();
+        $orderStatus = $this->getOrderStatusMatrix()[$mageOrderStatus];
+        $shopName = $this->order->getStoreName();
+
+        if (!$orderStatus) {
+            $this->_logger->error('Magento order status not configured to schema.org order status.', $mageOrderStatus);
+
+            return $text;
+        }
+
+        try {
+            $order = new Order($orderNumber, $orderStatus, $shopName);
+        } catch (InvalidArgumentException $e) {
+            $this->_logger->error($e->getMessage());
+
+            return $text;
+        }
+
+        $orderRenderer = new OrderRenderer($order);
+        $extension = $orderRenderer->render();
+        $text = self::replaceLast('</body>', $extension . '</body>', $text);
+
+        return $text;
+    }
+
+    private function extendParcelDeliveryData(string $text): string
+    {
+        // @TODO handle text
 
         return $text;
     }
@@ -80,6 +137,7 @@ class Template extends MageTemplate
     private function getOrderStatusMatrix()
     {
         return json_decode($this->getConfigValue(self::ORDER_STATUS_MATRIX));
+        // @TODO give it as array back
     }
 
     /**
