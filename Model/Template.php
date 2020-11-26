@@ -6,6 +6,7 @@ use EinsUndEins\SchemaOrgMailBody\Model\Order;
 use EinsUndEins\SchemaOrgMailBody\Model\ParcelDelivery;
 use EinsUndEins\SchemaOrgMailBody\Renderer\OrderRenderer;
 use EinsUndEins\SchemaOrgMailBody\Renderer\ParcelDeliveryRenderer;
+use Exception;
 use InvalidArgumentException;
 use Magento\Email\Model\Template as MageTemplate;
 use Magento\Framework\Exception\NoSuchEntityException;
@@ -54,36 +55,24 @@ class Template extends MageTemplate
      */
     private function extendOrderData(string $text): string
     {
-        if ($this->order) {
-            $this->_logger->error('Couldn\'t get order from the email variables');
+        try{
+            if ($this->order) {
+                throw new Exception('Couldn\'t get order from the email variables');
+            }
 
-            return $text;
-        }
+            $orderNumber = $this->order->getId();
+            $orderStatus = $this->getSchemaOrderStatusFromOrder($this->order);
+            $shopName = $this->order->getStoreName();
 
-        $orderNumber = $this->order->getId();
-        $mageOrderStatus = $this->order->getStatus();
-        $orderStatus = $this->getOrderStatusMatrix()[$mageOrderStatus];
-        $shopName = $this->order->getStoreName();
-
-        if (!$orderStatus) {
-            $this->_logger->error('Magento order status not configured to schema.org order status.', $mageOrderStatus);
-
-            return $text;
-        }
-
-        try {
             $order = new Order($orderNumber, $orderStatus, $shopName);
-        } catch (InvalidArgumentException $e) {
+            $orderRenderer = new OrderRenderer($order);
+            $extension = $orderRenderer->render();
+            $text = self::replaceLast('</body>', $extension . '</body>', $text);
+        } catch (Exception $e) {
             $this->_logger->error($e->getMessage());
-
+        } finally {
             return $text;
         }
-
-        $orderRenderer = new OrderRenderer($order);
-        $extension = $orderRenderer->render();
-        $text = self::replaceLast('</body>', $extension . '</body>', $text);
-
-        return $text;
     }
 
     /**
@@ -95,39 +84,35 @@ class Template extends MageTemplate
      */
     private function extendParcelDeliveryData(string $text): string
     {
-        if ($this->shipment) {
-            $this->_logger->error('Couldn\'t get shipment from the email variables');
-
-            return $text;
-        }
-
-        $mageOrderStatus = $this->shipment->getOrder()->getStatus();
-        $orderStatus = $this->getOrderStatusMatrix()[$mageOrderStatus];
-        if (!$orderStatus) {
-            $this->_logger->error('Magento order status not configured to schema.org order status.', $mageOrderStatus);
-
-            return $text;
-        }
-        $orderNumber = $this->shipment->getOrderId();
-        $shopName = $this->shipment->getStore()->getName();
-        foreach ($this->shipment->getTracksCollection() as $track) {
-            $deliveryName = $track->getTitle();
-            $trackingNumber = $track->getTrackNumber();
-
-            try {
-                $parcelDelivery = new ParcelDelivery($deliveryName, $trackingNumber, $orderNumber, $orderStatus, $shopName);
-            } catch (InvalidArgumentException $e) {
-                $this->_logger->error($e->getMessage());
-
-                continue;
+        try {
+            if ($this->shipment) {
+                throw new Exception('Couldn\'t get shipment from the email variables');
             }
 
-            $parcelDeliveryRenderer = new ParcelDeliveryRenderer($parcelDelivery);
-            $extension = $parcelDeliveryRenderer->render();
-            $text = self::replaceLast('</body>', $extension . '</body>', $text);
-        }
+            $orderStatus = $this->getSchemaOrderStatusFromOrder($this->shipment->getOrder());
+            $orderNumber = $this->shipment->getOrderId();
+            $shopName = $this->shipment->getStore()->getName();
+            foreach ($this->shipment->getTracksCollection() as $track) {
+                $deliveryName = $track->getTitle();
+                $trackingNumber = $track->getTrackNumber();
 
-        return $text;
+                try {
+                    $parcelDelivery = new ParcelDelivery($deliveryName, $trackingNumber, $orderNumber, $orderStatus, $shopName);
+                } catch (InvalidArgumentException $e) {
+                    $this->_logger->error($e->getMessage());
+
+                    continue;
+                }
+
+                $parcelDeliveryRenderer = new ParcelDeliveryRenderer($parcelDelivery);
+                $extension = $parcelDeliveryRenderer->render();
+                $text = self::replaceLast('</body>', $extension . '</body>', $text);
+            }
+        } catch (Exception $e) {
+            $this->_logger->error($e->getMessage());
+        } finally {
+            return $text;
+        }
     }
 
     /**
@@ -165,6 +150,23 @@ class Template extends MageTemplate
         }
 
         return $subject;
+    }
+
+    /**
+     * @param OrderInterface $order
+     *
+     * @return string
+     * @throws Exception
+     */
+    private function getSchemaOrderStatusFromOrder(OrderInterface $order): string
+    {
+        $mageOrderStatus = $order->getStatus();
+        $schemaOrderStatus = $this->getOrderStatusMatrix()[$mageOrderStatus];
+        if (!$schemaOrderStatus) {
+            throw new Exception('Magento order status \'' . $mageOrderStatus . '\' not configured to schema.org order status.');
+        }
+
+        return $schemaOrderStatus;
     }
 
     /**
