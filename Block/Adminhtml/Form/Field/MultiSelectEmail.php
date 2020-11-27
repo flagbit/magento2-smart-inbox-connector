@@ -21,24 +21,6 @@ class MultiSelectEmail implements OptionSourceInterface
      */
     public function toOptionArray()
     {
-        $result = [];
-        foreach ($this->getConfigTemplates() as $emailTemplate) {
-            $result[] = [
-                'value' => $emailTemplate['value'],
-                'label' => $emailTemplate['label'],
-            ];
-        }
-
-        return $result;
-    }
-
-    /**
-     * Get list of available email templates
-     *
-     * @return array[]
-     */
-    private function getConfigTemplates()
-    {
         return $this->emailConfig->getAvailableTemplates();
     }
 }
