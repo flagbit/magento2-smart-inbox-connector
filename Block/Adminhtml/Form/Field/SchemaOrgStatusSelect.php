@@ -50,7 +50,7 @@ class SchemaOrgStatusSelect extends Select
      *
      * @return array
      */
-    public function getSourceOptions(): array
+    private function getSourceOptions(): array
     {
         $result = [];
         foreach (AbstractOrderInterface::POSSIBLE_ORDER_STATUS as $orderStatus) {
