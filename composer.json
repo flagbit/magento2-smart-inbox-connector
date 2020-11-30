@@ -22,16 +22,12 @@
         {
             "type": "composer",
             "url": "https://repo.magento.com/"
-        },
-        {
-            "type": "vcs",
-            "url": "git@github.com:flagbit/schemaorg-mail-body.git"
         }
     ],
     "require": {
         "php": ">=7.1.0",
         "ext-json": "*",
-        "flagbit/schemaorg-mail-body": "dev-master",
+        "flagbit/schemaorg-mail-body": "0.2.0",
         "magento/framework": ">=101.0.0",
         "magento/module-backend": ">=100.2.0",
         "magento/magento-composer-installer": "*",
