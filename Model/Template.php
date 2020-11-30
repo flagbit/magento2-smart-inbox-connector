@@ -57,7 +57,7 @@ class Template extends MageTemplate
     private function extendOrderData(string $text): string
     {
         try{
-            if ($this->order) {
+            if (!$this->order) {
                 throw new Exception('Couldn\'t get order from the email variables');
             }
 
@@ -86,7 +86,7 @@ class Template extends MageTemplate
     private function extendParcelDeliveryData(string $text): string
     {
         try {
-            if ($this->shipment) {
+            if (!$this->shipment) {
                 throw new Exception('Couldn\'t get shipment from the email variables');
             }
 
