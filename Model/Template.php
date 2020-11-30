@@ -36,11 +36,11 @@ class Template extends MageTemplate
 
         $this->fetchOrderAndShipment();
 
-        if (in_array($this->getOrderEmails(), $this->getId())) {
+        if (in_array($this->getId(), $this->getOrderEmails())) {
             $text = $this->extendOrderData($text);
         }
 
-        if (in_array($this->getParcelDeliveryEmails(), $this->getId())) {
+        if (in_array($this->getId(), $this->getParcelDeliveryEmails())) {
             $text = $this->extendParcelDeliveryData($text);
         }
 
