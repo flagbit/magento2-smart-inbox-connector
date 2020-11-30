@@ -2,7 +2,7 @@
 
 namespace EinsUndEins\TransactionMailExtender\Block\Adminhtml\Form\Field;
 
-use EinsUndEins\SchemaOrgMailBody\Model\AbstractOrderInterface;
+use EinsUndEins\SchemaOrgMailBody\Model\OrderInterface;
 use Magento\Framework\View\Element\Html\Select;
 
 class SchemaOrgStatusSelect extends Select
@@ -53,7 +53,7 @@ class SchemaOrgStatusSelect extends Select
     private function getSourceOptions(): array
     {
         $result = [];
-        foreach (AbstractOrderInterface::POSSIBLE_ORDER_STATUS as $orderStatus) {
+        foreach (OrderInterface::POSSIBLE_ORDER_STATUS as $orderStatus) {
             $result[] = ['label' => $orderStatus, 'value' =>$orderStatus];
         }
 
