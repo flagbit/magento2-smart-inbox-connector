@@ -28,9 +28,11 @@ jobs:
 
     - name: Install dependencies
       if: steps.composer-cache.outputs.cache-hit != 'true'
-      run: |
-        composer config --global http-basic.repo.magento.com ${{ secrets.mage_user }} ${{ secrets.mage_pw }}
-        composer install --prefer-dist --no-progress --no-suggest
+      uses: php-actions/composer@v4
+      with:
+        composer_version: 1
+        args: --prefer-dist
+        command: config --global http-basic.repo.magento.com ${{ secrets.mage_user }} ${{ secrets.mage_pw }} && composer install --prefer-dist --no-progress --no-suggest
 
     # Add a test script to composer.json, for instance: "test": "vendor/bin/phpunit"
     # Docs: https://getcomposer.org/doc/articles/scripts.md
