@@ -41,7 +41,9 @@
             "registration.php"
         ],
         "psr-4": {
-            "EinsUndEins\\TransactionMailExtender\\": ""
+            "EinsUndEins\\TransactionMailExtender\\": "",
+            "Magento\\Framework\\": "htdocs/lib/internal/Magento/Framework/",
+            "Magento\\Setup\\": "htdocs/setup/src/Magento/Setup/"
         }
     },
     "config": {
