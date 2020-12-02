@@ -2,30 +2,95 @@
 
 namespace EinsUndEins\TransactionMailExtender\Model;
 
-use EinsUndEins\SchemaOrgMailBody\Model\Order;
-use EinsUndEins\SchemaOrgMailBody\Model\ParcelDelivery;
-use EinsUndEins\SchemaOrgMailBody\Renderer\OrderRenderer;
-use EinsUndEins\SchemaOrgMailBody\Renderer\ParcelDeliveryRenderer;
+use EinsUndEins\SchemaOrgMailBody\Model\OrderFactory;
+use EinsUndEins\SchemaOrgMailBody\Model\ParcelDeliveryFactory;
+use EinsUndEins\SchemaOrgMailBody\Renderer\OrderRendererFactory;
+use EinsUndEins\SchemaOrgMailBody\Renderer\ParcelDeliveryRendererFactory;
 use EinsUndEins\TransactionMailExtender\Block\Adminhtml\Form\Field\OrderStatusMatrix;
 use Exception;
 use InvalidArgumentException;
 use Magento\Email\Model\Template as MageTemplate;
+use Magento\Email\Model\Template\Config;
+use Magento\Email\Model\Template\FilterFactory;
+use Magento\Email\Model\TemplateFactory;
+use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\Framework\Filesystem;
+use Magento\Framework\Filter\FilterManager;
+use Magento\Framework\Model\Context;
+use Magento\Framework\Registry;
+use Magento\Framework\Serialize\Serializer\Json;
+use Magento\Framework\UrlInterface;
+use Magento\Framework\View\Asset\Repository;
+use Magento\Framework\View\DesignInterface;
 use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Sales\Api\Data\ShipmentInterface;
+use Magento\Store\Model\App\Emulation;
+use Magento\Store\Model\StoreManagerInterface;
 
 class Template extends MageTemplate
 {
-    private const CONFIG_PATH = 'transaction_mail_extender/general/';
-    private const MODULE_ENABLED = 'enable';
+    private const CONFIG_PATH            = 'transaction_mail_extender/general/';
+    private const MODULE_ENABLED         = 'enable';
     private const PARCEL_DELIVERY_EMAILS = 'parcel_delivery_emails';
-    private const ORDER_EMAILS = 'order_emails';
-    private const ORDER_STATUS_MATRIX = 'order_status_matrix';
-
+    private const ORDER_EMAILS           = 'order_emails';
+    private const ORDER_STATUS_MATRIX    = 'order_status_matrix';
+    /** @var OrderFactory $orderFactory */
+    private $orderFactory;
+    /** @var OrderRendererFactory $orderRendererFactory */
+    private $orderRendererFactory;
+    /** @var ParcelDeliveryFactory $parcelDeliveryFactory */
+    private $parcelDeliveryFactory;
+    /** @var ParcelDeliveryRendererFactory $parcelDeliveryRendererFactory */
+    private $parcelDeliveryRendererFactory;
     /** @var OrderInterface */
     private $order;
     /** @var Shipmentinterface */
     private $shipment;
+
+    public function __construct(
+        Context $context,
+        DesignInterface $design,
+        Registry $registry,
+        Emulation $appEmulation,
+        StoreManagerInterface $storeManager,
+        Repository $assetRepo,
+        Filesystem $filesystem,
+        ScopeConfigInterface $scopeConfig,
+        Config $emailConfig,
+        TemplateFactory $templateFactory,
+        FilterManager $filterManager,
+        UrlInterface $urlModel,
+        FilterFactory $filterFactory,
+        OrderFactory $orderFactory,
+        ParcelDeliveryFactory $parcelDeliveryFactory,
+        OrderRendererFactory $orderRendererFactory,
+        ParcelDeliveryRendererFactory $parcelDeliveryRendererFactory,
+        array $data = [],
+        Json $serializer = null
+    ) {
+        $this->orderFactory                  = $orderFactory;
+        $this->parcelDeliveryFactory         = $parcelDeliveryFactory;
+        $this->orderRendererFactory          = $orderRendererFactory;
+        $this->parcelDeliveryRendererFactory = $parcelDeliveryRendererFactory;
+        parent::__construct(
+            $context,
+            $design,
+            $registry,
+            $appEmulation,
+            $storeManager,
+            $assetRepo,
+            $filesystem,
+            $scopeConfig,
+            $emailConfig,
+            $templateFactory,
+            $filterManager,
+            $urlModel,
+            $filterFactory,
+            $data,
+            $serializer
+        );
+    }
 
     public function processTemplate()
     {
@@ -56,19 +121,25 @@ class Template extends MageTemplate
      */
     private function extendOrderData(string $text): string
     {
-        try{
+        try {
             if (!$this->order) {
                 throw new Exception('Couldn\'t get order from the email variables');
             }
 
             $orderNumber = $this->order->getId();
             $orderStatus = $this->getSchemaOrderStatusFromOrder($this->order);
-            $shopName = $this->order->getStoreName();
+            $shopName    = $this->order->getStoreName();
 
-            $order = new Order($orderNumber, $orderStatus, $shopName);
-            $orderRenderer = new OrderRenderer($order);
-            $extension = $orderRenderer->render();
-            $text = self::replaceLast('</body>', $extension . '</body>', $text);
+            $order         = $this->orderFactory->create(
+                [
+                    'orderNumber' => $orderNumber,
+                    'orderStatus' => $orderStatus,
+                    'shopName'    => $shopName,
+                ]
+            );
+            $orderRenderer = $this->orderRendererFactory->create([ 'order' => $order ]);
+            $extension     = $orderRenderer->render();
+            $text          = self::replaceLast('</body>', $extension . '</body>', $text);
         } catch (Exception $e) {
             $this->_logger->error($e->getMessage());
         } finally {
@@ -92,22 +163,30 @@ class Template extends MageTemplate
 
             $orderStatus = $this->getSchemaOrderStatusFromOrder($this->shipment->getOrder());
             $orderNumber = $this->shipment->getOrderId();
-            $shopName = $this->shipment->getStore()->getName();
+            $shopName    = $this->shipment->getStore()->getName();
             foreach ($this->shipment->getTracksCollection() as $track) {
-                $deliveryName = $track->getTitle();
+                $deliveryName   = $track->getTitle();
                 $trackingNumber = $track->getTrackNumber();
 
                 try {
-                    $parcelDelivery = new ParcelDelivery($deliveryName, $trackingNumber, $orderNumber, $orderStatus, $shopName);
+                    $parcelDelivery = $this->parcelDeliveryFactory->create(
+                        [
+                            'deliveryName' => $deliveryName,
+                            'trackingNumber' => $trackingNumber,
+                            'orderNumber' => $orderNumber,
+                            'orderStatus' => $orderStatus,
+                            'shopName' => $shopName
+                        ]
+                    );
                 } catch (InvalidArgumentException $e) {
                     $this->_logger->error($e->getMessage());
 
                     continue;
                 }
 
-                $parcelDeliveryRenderer = new ParcelDeliveryRenderer($parcelDelivery);
-                $extension = $parcelDeliveryRenderer->render();
-                $text = self::replaceLast('</body>', $extension . '</body>', $text);
+                $parcelDeliveryRenderer = $this->parcelDeliveryRendererFactory->create(['parcelDelivery' => $parcelDelivery]);
+                $extension              = $parcelDeliveryRenderer->render();
+                $text                   = self::replaceLast('</body>', $extension . '</body>', $text);
             }
         } catch (Exception $e) {
             $this->_logger->error($e->getMessage());
@@ -121,9 +200,9 @@ class Template extends MageTemplate
      */
     private function fetchOrderAndShipment()
     {
-        $this->order = null;
+        $this->order    = null;
         $this->shipment = null;
-        foreach($this->_vars as $var) {
+        foreach ($this->_vars as $var) {
             if ($var instanceof OrderInterface) {
                 $this->order = $var;
             }
@@ -145,8 +224,7 @@ class Template extends MageTemplate
     static private function replaceLast(string $search, string $replace, string $subject): string
     {
         $pos = strrpos($subject, $search);
-        if($pos !== false)
-        {
+        if ($pos !== false) {
             $subject = substr_replace($subject, $replace, $pos, strlen($search));
         }
 
@@ -161,7 +239,7 @@ class Template extends MageTemplate
      */
     private function getSchemaOrderStatusFromOrder(OrderInterface $order): string
     {
-        $mageOrderStatus = $order->getStatus();
+        $mageOrderStatus   = $order->getStatus();
         $schemaOrderStatus = $this->getOrderStatusMatrix()[$mageOrderStatus];
         if (!$schemaOrderStatus) {
             throw new Exception('Magento order status \'' . $mageOrderStatus . '\' not configured to schema.org order status.');
@@ -178,7 +256,7 @@ class Template extends MageTemplate
      */
     private function getOrderStatusMatrix()
     {
-        $origin = json_decode($this->getConfigValue(self::ORDER_STATUS_MATRIX));
+        $origin   = json_decode($this->getConfigValue(self::ORDER_STATUS_MATRIX));
         $remapped = [];
         foreach ($origin as $entry) {
             $remapped[$entry->{OrderStatusMatrix::MAGE_STATUS_KEY}] = $entry->{OrderStatusMatrix::SCHEMA_ORG_STATUS_KEY};
