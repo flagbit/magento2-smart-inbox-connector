@@ -383,7 +383,28 @@ class TemplateTest extends TestCase
      */
     private function createStoreStub(): StoreInterface
     {
-        $storeStub = $this->createMock(StoreInterface::class);
+        $storeStub = $this->getMockBuilder(StoreInterface::class)
+            ->disableOriginalConstructor()
+            ->setMethods(
+                [
+                    'getFrontendName',
+                    'getId',
+                    'setId',
+                    'getCode',
+                    'setCode',
+                    'getName',
+                    'setName',
+                    'getWebsiteId',
+                    'setWebsiteId',
+                    'getStoreGroupId',
+                    'setStoreGroupId',
+                    'setIsActive',
+                    'getIsActive',
+                    'getExtensionAttributes',
+                    'setExtensionAttributes'
+                ]
+            )
+            ->getMock();
         $storeStub->method('getId')
             ->willReturn(1);
         $storeStub->method('getFrontendName')
