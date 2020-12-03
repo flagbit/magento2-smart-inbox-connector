@@ -7,6 +7,11 @@
             <directory>./Test</directory>
         </testsuite>
     </testsuites>
+    <filter>
+        <whitelist>
+            <directory>.</directory>
+        </whitelist>
+    </filter>
     <logging>
         <log type="junit"
              target="build/junit.xml"/>
