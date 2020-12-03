@@ -209,10 +209,10 @@ class TemplateTest extends TestCase
         $assetRepoStub                    = $this->createMock(Repository::class);
         $filesystemStub                   = $this->createFilesystemStub($templateText);
         $emailConfigStub                  = $this->createEmailConfigStub($designThemeStub);
-        $templateFactoryStub              = $this->createMock(TemplateFactory::class);
+        $templateFactoryStub              = $this->createFactoryStub('Magento\Email\Model\TemplateFactory');
         $filterManagerStub                = $this->createMock(FilterManager::class);
         $urlModelStub                     = $this->createMock(UrlInterface::class);
-        $filterFactoryStub                = $this->createMock(FilterFactory::class);
+        $filterFactoryStub                = $this->createFactoryStub('Magento\Email\Model\Template\FilterFactory');
         $orderStub                        = $this->createMock(EinsUndEinsOrderInterface::class);
         $orderFactoryStub                 = $this->createOrderFactoryStub($orderStub, $orderStatusWrong);
         $orderRendererFactoryStub         = $this->createOrderRendererFactoryStub($orderStub);
@@ -401,7 +401,7 @@ class TemplateTest extends TestCase
                     'setIsActive',
                     'getIsActive',
                     'getExtensionAttributes',
-                    'setExtensionAttributes'
+                    'setExtensionAttributes',
                 ]
             )
             ->getMock();
@@ -541,7 +541,11 @@ class TemplateTest extends TestCase
      */
     private function createOrderFactoryStub(EinsUndEinsOrderInterface $orderStub, bool $orderStatusWrong = false): OrderFactory
     {
-        $orderFactoryStub = $this->createMock(OrderFactory::class);
+        $orderFactoryStub = $this
+            ->getMockBuilder('EinsUndEins\SchemaOrgMailBody\Model\OrderFactory')
+            ->disableOriginalConstructor()
+            ->setMethods([ 'create' ])
+            ->getMock();
         $method           = $orderFactoryStub
             ->method('create')
             ->with([ [ 'orderNumber' => 1, 'orderStatus' => '', 'shopName' => 'shop' ] ])
@@ -564,7 +568,11 @@ class TemplateTest extends TestCase
         $orderRendererStub
             ->method('render')
             ->willReturn('<div>eins-und-eins-library-order-result</div>');
-        $orderRendererFactoryStub = $this->createMock(OrderRendererFactory::class);
+        $orderRendererFactoryStub = $this
+            ->getMockBuilder('EinsUndEins\SchemaOrgMailBody\Renderer\OrderRendererFactory')
+            ->disableOriginalConstructor()
+            ->setMethods([ 'create' ])
+            ->getMock();
         $orderRendererFactoryStub
             ->method('create')
             ->with([ [ 'order' => $orderStub ] ])
@@ -636,7 +644,11 @@ class TemplateTest extends TestCase
         array $parcelDeliveryStubs,
         bool $orderStatusWrong = false
     ): ParcelDeliveryFactory {
-        $parcelDeliveryFactoryStub = $this->createMock(ParcelDeliveryFactory::class);
+        $parcelDeliveryFactoryStub = $this
+            ->getMockBuilder('EinsUndEins\SchemaOrgMailBody\Model\ParcelDeliveryFactory')
+            ->disableOriginalConstructor()
+            ->setMethods([ 'create' ])
+            ->getMock();
         $valueMap                  = [];
         foreach ($parcelDeliveryStubs as $id => $parcelDeliveryStub) {
             $valueMap[] = [
@@ -668,7 +680,11 @@ class TemplateTest extends TestCase
      */
     private function createParcelDeliveryRendererFactoryStub(array $parcelDeliveryStubs): ParcelDeliveryRendererFactory
     {
-        $parcelDeliveryRendererFactorySub = $this->createMock(ParcelDeliveryRendererFactory::class);
+        $parcelDeliveryRendererFactorySub = $this
+            ->getMockBuilder('EinsUndEins\SchemaOrgMailBody\Renderer\ParcelDeliveryRendererFactory')
+            ->disableOriginalConstructor()
+            ->setMethods(['create'])
+            ->getMock();
         $valueMap                         = [];
         foreach ($parcelDeliveryStubs as $id => $parcelDeliveryStub) {
             $valueMap[] = [
@@ -748,5 +764,17 @@ class TemplateTest extends TestCase
             '<head><title>foo</title></head>' .
             '<body><h1>bar</h1><span>text<!--</body>--></span></body>' .
             '</html>';
+    }
+
+    /**
+     * @param string $className
+     *
+     * @return MockObject
+     */
+    private function createFactoryStub(string $className): MockObject
+    {
+        return $this->getMockBuilder($className)
+            ->disableOriginalConstructor()
+            ->getMock();
     }
 }
