@@ -6,6 +6,7 @@ use Magento\Backend\Block\Template\Context;
 use Magento\Config\Block\System\Config\Form\Field\FieldArray\AbstractFieldArray;
 use Magento\Framework\DataObject;
 use Magento\Framework\DataObjectFactory;
+use Magento\Framework\Exception\LocalizedException;
 use Magento\Sales\Model\ResourceModel\Order\Status\CollectionFactory;
 
 class OrderStatusMatrix extends AbstractFieldArray
@@ -108,6 +109,7 @@ class OrderStatusMatrix extends AbstractFieldArray
      * Get Schema org status renderer
      *
      * @return SchemaOrgStatusSelect
+     * @throws LocalizedException
      */
     private function getSchemaOrgStatusRenderer()
     {
@@ -126,6 +128,7 @@ class OrderStatusMatrix extends AbstractFieldArray
      * Get mage status renderer
      *
      * @return MageStatusColumn
+     * @throws LocalizedException
      */
     private function getMageStatusRenderer()
     {
