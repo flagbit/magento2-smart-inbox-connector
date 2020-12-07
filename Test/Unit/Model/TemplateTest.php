@@ -317,11 +317,11 @@ class TemplateTest extends TestCase
         $templateFilterStub = $this->createMock(Filter::class);
 
         $templateFilterStub->method('setUseSessionInUrl')
-            ->with([ false ])
+            ->with(false)
             ->willReturnSelf();
 
         $templateFilterStub->method('setPlainTemplateMode')
-            ->with([ false ])
+            ->with(false)
             ->willReturnSelf();
 
         $templateFilterStub->method('setIsChildTemplate')
@@ -521,15 +521,15 @@ class TemplateTest extends TestCase
     {
         $rootDirectoryStub = $this->createMock(ReadInterface::class);
         $rootDirectoryStub->method('readFile')
-            ->with([ 'relativePath' ])
+            ->with('relativePath')
             ->willReturn($templateText);
         $rootDirectoryStub->method('getRelativePath')
-            ->with([ '' ])
+            ->with('')
             ->willReturn('relativePath');
 
         $filesystemStub = $this->createMock(Filesystem::class);
         $filesystemStub->method('getDirectoryRead')
-            ->with([ 'base' ])
+            ->with('base')
             ->willReturn($rootDirectoryStub);
 
         return $filesystemStub;
@@ -544,10 +544,10 @@ class TemplateTest extends TestCase
     {
         $emailConfigStub = $this->createMock(Config::class);
         $emailConfigStub->method('getTemplateFilename')
-            ->with([ 'email_id_1', [ 'area' => '', 'theme' => '', 'themeModel' => $designThemeStub, 'locale' => '' ] ])
+            ->with('email_id_1', [ 'area' => '', 'theme' => '', 'themeModel' => $designThemeStub, 'locale' => '' ])
             ->willReturn('');
         $emailConfigStub->method('getTemplateType')
-            ->with([ 'email_id_1' ])
+            ->with('email_id_1')
             ->willReturn('html');
 
         return $emailConfigStub;
@@ -768,6 +768,7 @@ class TemplateTest extends TestCase
             'logo_alt'        => 'shop.com',
             'logo_width'      => 100,
             'logo_height'     => 100,
+            'store'           => [],
             'store_phone'     => '071122334455',
             'store_hours'     => 12,
             'store_email'     => 'shop@shop.com',
