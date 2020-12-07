@@ -13,6 +13,7 @@ use EinsUndEins\SchemaOrgMailBody\Renderer\ParcelDeliveryRendererFactory;
 use EinsUndEins\TransactionMailExtender\Model\Template;
 use EinsUndEins\TransactionMailExtender\Test\Unit\TestCase;
 use InvalidArgumentException;
+use Magento\Email\Model\ResourceModel\Template as ResourceTemplate;
 use Magento\Email\Model\Template\Config;
 use Magento\Email\Model\Template\Filter;
 use Magento\Email\Model\Template\FilterFactory;
@@ -35,6 +36,8 @@ use Magento\Framework\View\DesignInterface;
 use Magento\MediaStorage\Helper\File\Storage\Database;
 use Magento\Sales\Api\Data\OrderInterface as MageOrderInterface;
 use Magento\Sales\Api\Data\ShipmentInterface;
+use Magento\Sales\Model\Order;
+use Magento\Sales\Model\Order\Shipment;
 use Magento\Sales\Model\ResourceModel\Order\Shipment\Track;
 use Magento\Store\Api\Data\StoreInterface;
 use Magento\Store\Model\App\Emulation;
@@ -222,7 +225,13 @@ class TemplateTest extends TestCase
         $parcelDeliveryRendererFactorySub = $this->createParcelDeliveryRendererFactoryStub($parcelDeliveryStubs);
         $serializerStub                   = $this->createMock(Json::class);
         $databaseStub                     = $this->createMock(Database::class);
-        $this->mockObjectManager([ [ Database::class, $databaseStub ] ]);
+        $resourceTemplateStub             = $this->createResourceTemplateStub();
+        $this->mockObjectManager(
+            [
+                [ Database::class, $databaseStub ],
+                [ ResourceTemplate::class, $resourceTemplateStub ],
+            ]
+        );
 
         return new Template(
             $contextStub,
@@ -341,7 +350,10 @@ class TemplateTest extends TestCase
      */
     private function createShipmentStub(string $orderStatus, int $numberTracks): ShipmentInterface
     {
-        $shipmentStub = $this->createMock(ShipmentInterface::class);
+        $shipmentStub = $this->getMockBuilder(Shipment::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getOrder', 'getOrderId', 'getStore', 'getTracksCollection'])
+            ->getMock();
         $shipmentStub->method('getOrder')
             ->willReturn($this->createMageOrderStub($orderStatus));
         $shipmentStub->method('getOrderId')
@@ -367,7 +379,10 @@ class TemplateTest extends TestCase
      */
     private function createMageOrderStub(string $orderStatus): MageOrderInterface
     {
-        $orderStub = $this->createMock(MageOrderInterface::class);
+        $orderStub = $this->getMockBuilder(Order::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getId', 'getStatus', 'getStoreName'])
+            ->getMock();
         $orderStub->method('getId')
             ->willReturn(1);
         $orderStub->method('getStatus')
@@ -427,7 +442,10 @@ class TemplateTest extends TestCase
      */
     private function createTrackStub(string $title, string $trackNumber): Track
     {
-        $trackStub = $this->createMock(Track::class);
+        $trackStub = $this->getMockBuilder(Track::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getTitle', 'getTrackNumber'])
+            ->getMock();
         $trackStub->method('getTitle')
             ->willReturn($title);
         $trackStub->method('getTrackNumber')
@@ -778,5 +796,17 @@ class TemplateTest extends TestCase
         return $this->getMockBuilder($className)
             ->disableOriginalConstructor()
             ->getMock();
+    }
+
+    /**
+     * @return ResourceTemplate|MockObject
+     */
+    private function createResourceTemplateStub()
+    {
+        $resourceTemplateStub = $this->createMock(ResourceTemplate::class);
+        $resourceTemplateStub->method('getIdFieldName')
+            ->willReturn('id');
+
+        return $resourceTemplateStub;
     }
 }

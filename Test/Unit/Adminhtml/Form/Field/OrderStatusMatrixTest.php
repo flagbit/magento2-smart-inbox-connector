@@ -2,10 +2,13 @@
 
 namespace EinsUndEins\TransactionMailExtender\Test\Unit\Adminhtml\Form\Field;
 
+use EinsUndEins\TransactionMailExtender\Block\Adminhtml\Form\Field\MageStatusColumn;
 use EinsUndEins\TransactionMailExtender\Block\Adminhtml\Form\Field\OrderStatusMatrix;
+use EinsUndEins\TransactionMailExtender\Block\Adminhtml\Form\Field\SchemaOrgStatusSelect;
 use EinsUndEins\TransactionMailExtender\Test\Unit\TestCase;
 use Magento\Backend\Block\Template\Context;
 use Magento\Backend\Model\Session;
+use Magento\Cms\Block\Block;
 use Magento\Directory\Helper\Data as DirectoryHelper;
 use Magento\Framework\App\Cache\StateInterface as CacheStateInterface;
 use Magento\Framework\App\CacheInterface;
@@ -33,9 +36,12 @@ use Magento\Framework\UrlInterface;
 use Magento\Framework\View\Asset\Repository;
 use Magento\Framework\View\ConfigInterface;
 use Magento\Framework\View\DesignInterface;
+use Magento\Framework\View\Element\BlockInterface;
+use Magento\Framework\View\Element\Template;
 use Magento\Framework\View\Element\Template\File\Resolver;
 use Magento\Framework\View\Element\Template\File\Validator;
 use Magento\Framework\View\Helper\SecureHtmlRenderer;
+use Magento\Framework\View\Layout;
 use Magento\Framework\View\LayoutInterface;
 use Magento\Framework\View\Page\Config;
 use Magento\Framework\View\TemplateEnginePool;
@@ -68,7 +74,9 @@ class OrderStatusMatrixTest extends TestCase
             $dataObjectFactoryStub
         );
 
+        $layoutStub  = $this->createLayoutStub();
         $elementStub = $this->createElementStub();
+        $matrix->setLayout($layoutStub);
         $matrix->setElement($elementStub);
         $matrix->setName('name');
         $matrix->setId('id');
@@ -221,7 +229,10 @@ class OrderStatusMatrixTest extends TestCase
                 OrderStatusMatrix::MAGE_STATUS_KEY       => 'value3',
             ],
         ];
-        $elementStub = $this->createMock(AbstractElement::class);
+        $elementStub = $this->getMockBuilder(AbstractElement::class)
+            ->disableOriginalConstructor()
+            ->setMethods([ 'getValue' ])
+            ->getMock();
         $elementStub->method('getValue')
             ->willReturn($value);
 
@@ -326,5 +337,54 @@ class OrderStatusMatrixTest extends TestCase
         if (array_key_exists($key, $expected)) {
             $this->assertEquals($expected[$key], $actual[$key]);
         }
+    }
+
+    /**
+     * @return LayoutInterface|MockObject
+     */
+    private function createLayoutStub()
+    {
+        $mageStatusRendererStub = $this->createBlockStub();
+        $schemaOrgStatusRendererStub = $this->createBlockStub();
+
+        $layoutStub = $this->createMock(Layout::class);
+        $layoutStub->method('createBlock')
+            ->will(
+                $this->returnValueMap(
+                    [
+                        [
+                            MageStatusColumn::class,
+                            '',
+                            [ 'data' => [ 'is_render_to_js_template' => true ] ],
+                            $mageStatusRendererStub,
+                        ],
+                        [
+                            SchemaOrgStatusSelect::class,
+                            '',
+                            [ 'data' => [ 'is_render_to_js_template' => true ] ],
+                            $schemaOrgStatusRendererStub,
+                        ],
+                    ]
+                )
+            );
+
+        return $layoutStub;
+    }
+
+    /**
+     * @return BlockInterface
+     */
+    private function createBlockStub(): BlockInterface
+    {
+        $blockStub = $this->getMockBuilder(Template::class)
+            ->disableOriginalConstructor()
+            ->setMethods([ 'calcOptionHash', 'toHtml' ])
+            ->getMock();
+        $blockStub->method('calcOptionHash')
+            ->willReturn('hash');
+        $blockStub->method('toHtml')
+            ->willReturn('<div></div>');
+
+        return $blockStub;
     }
 }
