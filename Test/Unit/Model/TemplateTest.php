@@ -11,6 +11,7 @@ use EinsUndEins\SchemaOrgMailBody\Renderer\OrderRendererFactory;
 use EinsUndEins\SchemaOrgMailBody\Renderer\ParcelDeliveryRenderer;
 use EinsUndEins\SchemaOrgMailBody\Renderer\ParcelDeliveryRendererFactory;
 use EinsUndEins\TransactionMailExtender\Model\Template;
+use EinsUndEins\TransactionMailExtender\Test\Unit\TestCase;
 use InvalidArgumentException;
 use Magento\Email\Model\Template\Config;
 use Magento\Email\Model\Template\Filter;
@@ -31,6 +32,7 @@ use Magento\Framework\UrlInterface;
 use Magento\Framework\View\Asset\Repository;
 use Magento\Framework\View\Design\ThemeInterface;
 use Magento\Framework\View\DesignInterface;
+use Magento\MediaStorage\Helper\File\Storage\Database;
 use Magento\Sales\Api\Data\OrderInterface as MageOrderInterface;
 use Magento\Sales\Api\Data\ShipmentInterface;
 use Magento\Sales\Model\ResourceModel\Order\Shipment\Track;
@@ -39,7 +41,6 @@ use Magento\Store\Model\App\Emulation;
 use Magento\Store\Model\StoreManagerInterface;
 use PHPUnit\Framework\MockObject\Matcher\InvokedCount;
 use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 
 class TemplateTest extends TestCase
@@ -219,8 +220,9 @@ class TemplateTest extends TestCase
         $parcelDeliveryStubs              = $this->createParcelDeliveryStubArray(3);
         $parcelDeliveryFactoryStub        = $this->createParcelDeliveryFactoryStub($parcelDeliveryStubs, $orderStatusWrong);
         $parcelDeliveryRendererFactorySub = $this->createParcelDeliveryRendererFactoryStub($parcelDeliveryStubs);
-
-        $serializerStub = $this->createMock(Json::class);
+        $serializerStub                   = $this->createMock(Json::class);
+        $databaseStub                     = $this->createMock(Database::class);
+        $this->mockObjectManager([ [ Database::class, $databaseStub ] ]);
 
         return new Template(
             $contextStub,
@@ -683,7 +685,7 @@ class TemplateTest extends TestCase
         $parcelDeliveryRendererFactorySub = $this
             ->getMockBuilder('EinsUndEins\SchemaOrgMailBody\Renderer\ParcelDeliveryRendererFactory')
             ->disableOriginalConstructor()
-            ->setMethods(['create'])
+            ->setMethods([ 'create' ])
             ->getMock();
         $valueMap                         = [];
         foreach ($parcelDeliveryStubs as $id => $parcelDeliveryStub) {

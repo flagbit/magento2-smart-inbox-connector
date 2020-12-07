@@ -3,8 +3,10 @@
 namespace EinsUndEins\TransactionMailExtender\Test\Unit\Adminhtml\Form\Field;
 
 use EinsUndEins\TransactionMailExtender\Block\Adminhtml\Form\Field\OrderStatusMatrix;
+use EinsUndEins\TransactionMailExtender\Test\Unit\TestCase;
 use Magento\Backend\Block\Template\Context;
 use Magento\Backend\Model\Session;
+use Magento\Directory\Helper\Data as DirectoryHelper;
 use Magento\Framework\App\Cache\StateInterface as CacheStateInterface;
 use Magento\Framework\App\CacheInterface;
 use Magento\Framework\App\Config\ScopeConfigInterface;
@@ -21,6 +23,7 @@ use Magento\Framework\Escaper;
 use Magento\Framework\Event\ManagerInterface;
 use Magento\Framework\Filesystem;
 use Magento\Framework\Filter\FilterManager;
+use Magento\Framework\Json\Helper\Data as JsonHelper;
 use Magento\Framework\Math\Random;
 use Magento\Framework\Session\SessionManagerInterface;
 use Magento\Framework\Session\SidResolverInterface;
@@ -32,6 +35,7 @@ use Magento\Framework\View\ConfigInterface;
 use Magento\Framework\View\DesignInterface;
 use Magento\Framework\View\Element\Template\File\Resolver;
 use Magento\Framework\View\Element\Template\File\Validator;
+use Magento\Framework\View\Helper\SecureHtmlRenderer;
 use Magento\Framework\View\LayoutInterface;
 use Magento\Framework\View\Page\Config;
 use Magento\Framework\View\TemplateEnginePool;
@@ -39,7 +43,6 @@ use Magento\Sales\Model\ResourceModel\Order\Status\Collection;
 use Magento\Sales\Model\ResourceModel\Order\Status\CollectionFactory;
 use Magento\Store\Model\StoreManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 
 class OrderStatusMatrixTest extends TestCase
@@ -49,8 +52,20 @@ class OrderStatusMatrixTest extends TestCase
         $contextStub                 = $this->createContextStub();
         $statusCollectionFactoryStub = $this->createStatusCollectionFactoryStub();
         $dataObjectFactoryStub       = $this->createDataObjectFactoryStub();
-        $matrix                      = new OrderStatusMatrix(
-            $contextStub, $statusCollectionFactoryStub, $dataObjectFactoryStub
+        $secureHtmlRendererStub      = $this->createMock(SecureHtmlRenderer::class);
+        $jsonHelperStub              = $this->createMock(JsonHelper::class);
+        $directoryHelperStub         = $this->createMock(DirectoryHelper::class);
+        $this->mockObjectManager(
+            [
+                [ SecureHtmlRenderer::class, $secureHtmlRendererStub ],
+                [ JsonHelper::class, $jsonHelperStub ],
+                [ DirectoryHelper::class, $directoryHelperStub ],
+            ]
+        );
+        $matrix = new OrderStatusMatrix(
+            $contextStub,
+            $statusCollectionFactoryStub,
+            $dataObjectFactoryStub
         );
 
         $elementStub = $this->createElementStub();
@@ -60,47 +75,47 @@ class OrderStatusMatrixTest extends TestCase
 
         $expected = [
             [
-                'mage_status'       => 'value1',
-                'schema_org_status' => 'schema-value1',
-                'column_values'     => [
+                'mage_status'        => 'value1',
+                'schema_org_status'  => 'schema-value1',
+                'column_values'      => [
                     'there-id1_schema_org_status' => 'schema-value1',
-                    'there-id1_mage_status' => 'value1'
+                    'there-id1_mage_status'       => 'value1',
                 ],
                 'option_extra_attrs' => [
-                    'option_' . crc32('nameidschema-value1') => 'selected="selected"'
+                    'option_' . crc32('nameidschema-value1') => 'selected="selected"',
                 ],
-                '_id' => 'there-id1',
-                'key' => 'there-id1'
+                '_id'                => 'there-id1',
+                'key'                => 'there-id1',
             ],
             [
-                'mage_status' => 'value2',
-                'schema_org_status' => '',
-                'column_values' => [
+                'mage_status'        => 'value2',
+                'schema_org_status'  => '',
+                'column_values'      => [
                     'value2',
-                    ''
+                    '',
                 ],
                 'option_extra_attrs' => [
-                    'option_' . crc32('nameid') => 'selected="selected"'
-                ]
+                    'option_' . crc32('nameid') => 'selected="selected"',
+                ],
             ],
             [
-                'mage_status'   => 'value3',
-                'schema_org_status' => 'schema-value3',
-                'column_values' => [
+                'mage_status'        => 'value3',
+                'schema_org_status'  => 'schema-value3',
+                'column_values'      => [
                     'there-id3_schema_org_status' => 'schema-value3',
-                    'there-id3_mage_status' => 'value3'
+                    'there-id3_mage_status'       => 'value3',
                 ],
                 'option_extra_attrs' => [
-                    'option_' . crc32('nameidschema-value3') => 'selected="selected"'
+                    'option_' . crc32('nameidschema-value3') => 'selected="selected"',
                 ],
-                '_id' => 'there-id3',
-                'key' => 'there-id3'
+                '_id'                => 'there-id3',
+                'key'                => 'there-id3',
             ],
         ];
 
         $rows = $matrix->getArrayRows();
-        $i = max(count($rows), count($expected));
-        for (;$i > 0; --$i) {
+        $i    = max(count($rows), count($expected));
+        for (; $i > 0; --$i) {
             $this->assertRow($rows[$i], $expected[$i]);
         }
     }
@@ -193,18 +208,18 @@ class OrderStatusMatrixTest extends TestCase
                 OrderStatusMatrix::SCHEMA_ORG_STATUS_KEY => 'removed-value1-1',
                 OrderStatusMatrix::MAGE_STATUS_KEY       => 'removed-value1-2',
             ],
-            'there-id1' => [
+            'there-id1'   => [
                 OrderStatusMatrix::SCHEMA_ORG_STATUS_KEY => 'schema-value1',
-                OrderStatusMatrix::MAGE_STATUS_KEY       => 'value1'
+                OrderStatusMatrix::MAGE_STATUS_KEY       => 'value1',
             ],
             'removed-id2' => [
                 OrderStatusMatrix::SCHEMA_ORG_STATUS_KEY => 'removed-value2-1',
                 OrderStatusMatrix::MAGE_STATUS_KEY       => 'removed-value2-2',
             ],
-            'there-id3' => [
+            'there-id3'   => [
                 OrderStatusMatrix::SCHEMA_ORG_STATUS_KEY => 'schema-value3',
-                OrderStatusMatrix::MAGE_STATUS_KEY       => 'value3'
-            ]
+                OrderStatusMatrix::MAGE_STATUS_KEY       => 'value3',
+            ],
         ];
         $elementStub = $this->createMock(AbstractElement::class);
         $elementStub->method('getValue')
@@ -234,14 +249,14 @@ class OrderStatusMatrixTest extends TestCase
                     ],
                     [
                         'value' => 'value3',
-                        'label' => 'label3'
-                    ]
+                        'label' => 'label3',
+                    ],
                 ]
             );
 
         $statusCollectionFactoryStub = $this->getMockBuilder('Magento\Sales\Model\ResourceModel\Order\Status\CollectionFactory')
             ->disableOriginalConstructor()
-            ->setMethods(['create'])
+            ->setMethods([ 'create' ])
             ->getMock();
         $statusCollectionFactoryStub->method('create')
             ->willReturn($statusCollectionStub);
@@ -258,7 +273,7 @@ class OrderStatusMatrixTest extends TestCase
     {
         $dataObjectFactoryStub = $this->getMockBuilder('Magento\Framework\DataObjectFactory')
             ->disableOriginalConstructor()
-            ->setMethods(['create'])
+            ->setMethods([ 'create' ])
             ->getMock();
         $dataObjectFactoryStub->method('create')
             ->willReturn(new DataObject());
@@ -285,7 +300,8 @@ class OrderStatusMatrixTest extends TestCase
     }
 
     /**
-     * Assert if array has the specific key and if the value in the expected array to the key is equal to the value of the actual array to the key.
+     * Assert if array has the specific key and if the value in the expected array to the key is equal to the value of the
+     * actual array to the key.
      *
      * @param string $key
      * @param array  $expected
