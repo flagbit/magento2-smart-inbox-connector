@@ -50,7 +50,7 @@
     "scripts": {
         "pre-install-cmd": "@composer-install-fix",
         "pre-update-cmd": "@composer-install-fix",
-        "composer-install-fix": "mkdir ./app && mkdir ./app/etc && cp ./build/magento_vendor_path.php ./app/etc/vendor_path.php",
+        "composer-install-fix": "mkdir -p ./app/etc && cp ./build/magento_vendor_path.php ./app/etc/vendor_path.php",
         "test": "./vendor/bin/phpunit"
     }
 }
