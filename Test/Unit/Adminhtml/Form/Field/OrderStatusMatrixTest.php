@@ -121,9 +121,15 @@ class OrderStatusMatrixTest extends TestCase
             ],
         ];
 
-        $rows = $matrix->getArrayRows();
-        $i    = max(count($rows), count($expected));
-        for (; $i > 0; --$i) {
+        $rows = array_values($matrix->getArrayRows());
+        $i    = max(count($rows), count($expected)) - 1;
+        for (; $i >= 0; --$i) {
+            if (!array_key_exists($i, $expected)) {
+                $expected[$i] = [];
+            }
+            if (!array_key_exists($i, $rows)) {
+                $rows[$i] = new DataObject();
+            }
             $this->assertRow($rows[$i], $expected[$i]);
         }
     }
