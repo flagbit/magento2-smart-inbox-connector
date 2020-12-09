@@ -292,13 +292,13 @@ class TemplateTest extends TestCase
                             'transaction_mail_extender/general/order_status_matrix',
                             'store',
                             1,
-                            '{"array": [' .
+                            '[' .
                             '{"mage_status": "cancelled",' .
                             '"schema_org_status": "orderCancelled"},' .
                             '{"mage_status": "delivered",' .
                             '"schema_org_status": "orderDelivered"},' .
                             '{"mage_status": "not-existent",' .
-                            '"schema_org_status": "notExistent"}]}',
+                            '"schema_org_status": "notExistent"}]',
                         ],
                     ]
                 )
