@@ -93,7 +93,6 @@ class OrderStatusMatrixTest extends TestCase
                     'option_hash' => 'selected="selected"',
                 ],
                 '_id'                => 'there-id1',
-                'key'                => 'there-id1',
             ],
             [
                 'mage_status'        => 'value2',
@@ -117,7 +116,6 @@ class OrderStatusMatrixTest extends TestCase
                     'option_hash' => 'selected="selected"',
                 ],
                 '_id'                => 'there-id3',
-                'key'                => 'there-id3',
             ],
         ];
 
@@ -164,7 +162,6 @@ class OrderStatusMatrixTest extends TestCase
         }
 
         $this->hasKeyAndCanBeAssert('_id', $expected, $data);
-        $this->hasKeyAndCanBeAssert('key', $expected, $data);
     }
 
     /**
