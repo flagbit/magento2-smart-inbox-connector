@@ -43,9 +43,9 @@ use Magento\Store\Api\Data\StoreInterface;
 use Magento\Store\Model\App\Emulation;
 use Magento\Store\Model\StoreManager;
 use Magento\Store\Model\StoreManagerInterface;
-use PHPUnit\Framework\MockObject\Matcher\InvokedCount;
 use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\LoggerInterface;
+use Psr\Log\Test\TestLogger;
 
 class TemplateTest extends TestCase
 {
@@ -54,12 +54,17 @@ class TemplateTest extends TestCase
         $scopeConfigStub = $this->createScopeConfigStub(false);
         $expected        = $this->getOrigTemplateText();
 
-        $template = $this->createTemplate($scopeConfigStub, $expected);
+        $logger = new TestLogger();
+
+        $template = $this->createTemplate($scopeConfigStub, $expected, $logger, '');
         $template->setTemplateId('email_id_1');
         $template->setTemplateFilter($this->createTemplateFilterStub());
         $template->setVars($this->getNeededVars());
 
-        $this->assertEquals($expected, $template->processTemplate());
+        $actual = $template->processTemplate();
+
+        $this->assertLoggerHasNoRecords($logger);
+        $this->assertEquals($expected, $actual);
     }
 
     public function testProcessTemplate(): void
@@ -78,7 +83,8 @@ class TemplateTest extends TestCase
 
         $scopeConfigStub = $this->createScopeConfigStub(true);
 
-        $template = $this->createTemplate($scopeConfigStub, $templateText);
+        $logger   = new TestLogger();
+        $template = $this->createTemplate($scopeConfigStub, $templateText, $logger, 'orderCancelled');
         $template->setTemplateId('email_id_1');
         $template->setTemplateFilter($this->createTemplateFilterStub());
         $vars = $this->getNeededVars();
@@ -91,7 +97,10 @@ class TemplateTest extends TestCase
         );
         $template->setVars($vars);
 
-        $this->assertEquals($expected, $template->processTemplate());
+        $actual = $template->processTemplate();
+
+        $this->assertEquals($expected, $actual);
+        $this->assertLoggerHasNoRecords($logger);
     }
 
     public function testProcessTemplateWithoutOrderObject(): void
@@ -108,11 +117,12 @@ class TemplateTest extends TestCase
             '</html>';
 
         $scopeConfigStub = $this->createScopeConfigStub(true);
-
-        $template = $this->createTemplate(
+        $logger          = new TestLogger();
+        $template        = $this->createTemplate(
             $scopeConfigStub,
             $templateText,
-            'Couldn\'t get order from the email variables'
+            $logger,
+            ''
         );
         $template->setTemplateId('email_id_1');
         $template->setTemplateFilter($this->createTemplateFilterStub());
@@ -125,7 +135,10 @@ class TemplateTest extends TestCase
         );
         $template->setVars($vars);
 
-        $this->assertEquals($expected, $template->processTemplate());
+        $actual = $template->processTemplate();
+
+        $this->assertTrue($logger->hasErrorThatContains('Couldn\'t get order from the email variables'));
+        $this->assertEquals($expected, $actual);
     }
 
     public function testProcessTemplateWithoutShipmentObject(): void
@@ -140,11 +153,13 @@ class TemplateTest extends TestCase
             '</html>';
 
         $scopeConfigStub = $this->createScopeConfigStub(true);
+        $logger          = new TestLogger();
 
         $template = $this->createTemplate(
             $scopeConfigStub,
             $templateText,
-            'Couldn\'t get shipment from the email variables'
+            $logger,
+            'orderCancelled'
         );
         $template->setTemplateId('email_id_1');
         $template->setTemplateFilter($this->createTemplateFilterStub());
@@ -157,7 +172,10 @@ class TemplateTest extends TestCase
         );
         $template->setVars($vars);
 
-        $this->assertEquals($expected, $template->processTemplate());
+        $actual = $template->processTemplate();
+
+        $this->assertTrue($logger->hasErrorThatContains('Couldn\'t get shipment from the email variables'));
+        $this->assertEquals($expected, $actual);
     }
 
     public function testProcessTemplateWithWrongOrderStatus(): void
@@ -166,11 +184,12 @@ class TemplateTest extends TestCase
 
         $scopeConfigStub = $this->createScopeConfigStub(true);
 
+        $logger   = new TestLogger();
         $template = $this->createTemplate(
             $scopeConfigStub,
             $expected,
-            'Status is not one of the possible status.',
-            4,
+            $logger,
+            'orderCancelled',
             true
         );
         $template->setTemplateId('email_id_1');
@@ -185,14 +204,17 @@ class TemplateTest extends TestCase
         );
         $template->setVars($vars);
 
-        $this->assertEquals($expected, $template->processTemplate());
+        $actual = $template->processTemplate();
+
+        $this->assertTrue($logger->hasErrorThatContains('Status is not one of the possible status.'));
+        $this->assertEquals($expected, $actual);
     }
 
     /**
      * @param ScopeConfigInterface $scopeConfigStub
      * @param string               $templateText
-     * @param string|null          $expectedException
-     * @param int|null             $numberOfExpectedExceptions
+     * @param LoggerInterface      $logger
+     * @param string               $orderStatus
      * @param bool                 $orderStatusWrong
      *
      * @return Template
@@ -200,11 +222,11 @@ class TemplateTest extends TestCase
     private function createTemplate(
         ScopeConfigInterface $scopeConfigStub,
         string $templateText,
-        string $expectedException = null,
-        int $numberOfExpectedExceptions = null,
+        LoggerInterface $logger,
+        string $orderStatus,
         bool $orderStatusWrong = false
     ): Template {
-        $contextStub                      = $this->createContextStub($expectedException, $numberOfExpectedExceptions);
+        $contextStub                      = $this->createContextStub($logger);
         $storeStub                        = $this->createStoreStub();
         $storeManagerStub                 = $this->createStoreManagerStub($storeStub);
         $designThemeStub                  = $this->createDesignThemeStub();
@@ -219,7 +241,7 @@ class TemplateTest extends TestCase
         $urlModelStub                     = $this->createMock(UrlInterface::class);
         $filterFactoryStub                = $this->createFactoryStub('Magento\Email\Model\Template\FilterFactory');
         $orderStub                        = $this->createMock(EinsUndEinsOrderInterface::class);
-        $orderFactoryStub                 = $this->createOrderFactoryStub($orderStub, $orderStatusWrong);
+        $orderFactoryStub                 = $this->createOrderFactoryStub($orderStub, $orderStatus, $orderStatusWrong);
         $orderRendererFactoryStub         = $this->createOrderRendererFactoryStub($orderStub);
         $parcelDeliveryStubs              = $this->createParcelDeliveryStubArray(3);
         $parcelDeliveryFactoryStub        = $this->createParcelDeliveryFactoryStub($parcelDeliveryStubs, $orderStatusWrong);
@@ -353,7 +375,7 @@ class TemplateTest extends TestCase
     {
         $shipmentStub = $this->getMockBuilder(Shipment::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getOrder', 'getOrderId', 'getStore', 'getTracksCollection'])
+            ->setMethods([ 'getOrder', 'getOrderId', 'getStore', 'getTracksCollection' ])
             ->getMock();
         $shipmentStub->method('getOrder')
             ->willReturn($this->createMageOrderStub($orderStatus));
@@ -382,7 +404,7 @@ class TemplateTest extends TestCase
     {
         $orderStub = $this->getMockBuilder(Order::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getId', 'getStatus', 'getStoreName'])
+            ->setMethods([ 'getId', 'getStatus', 'getStoreName' ])
             ->getMock();
         $orderStub->method('getId')
             ->willReturn(1);
@@ -445,7 +467,7 @@ class TemplateTest extends TestCase
     {
         $trackStub = $this->getMockBuilder(Track::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getTitle', 'getTrackNumber'])
+            ->setMethods([ 'getTitle', 'getTrackNumber' ])
             ->getMock();
         $trackStub->method('getTitle')
             ->willReturn($title);
@@ -474,12 +496,11 @@ class TemplateTest extends TestCase
     }
 
     /**
-     * @param string|null $expectsException
-     * @param int|null    $numberExpectedExceptions
+     * @param LoggerInterface $logger
      *
      * @return Context|MockObject
      */
-    private function createContextStub(?string $expectsException, ?int $numberExpectedExceptions)
+    private function createContextStub(LoggerInterface $logger)
     {
         $contextStub = $this->createMock(Context::class);
 
@@ -488,9 +509,8 @@ class TemplateTest extends TestCase
         $this->addGetterTo($contextStub, 'cacheManager', CacheInterface::class);
         $this->addGetterTo($contextStub, 'actionValidator', RemoveAction::class);
 
-        $loggerStub = $this->createLoggerStub($expectsException, $numberExpectedExceptions);
         $contextStub->method('getLogger')
-            ->willReturn($loggerStub);
+            ->willReturn($logger);
 
         return $contextStub;
     }
@@ -556,12 +576,16 @@ class TemplateTest extends TestCase
 
     /**
      * @param EinsUndEinsOrderInterface $orderStub
+     * @param string                    $orderStatus
      * @param bool                      $orderStatusWrong
      *
      * @return OrderFactory|MockObject
      */
-    private function createOrderFactoryStub(EinsUndEinsOrderInterface $orderStub, bool $orderStatusWrong = false): OrderFactory
-    {
+    private function createOrderFactoryStub(
+        EinsUndEinsOrderInterface $orderStub,
+        string $orderStatus,
+        bool $orderStatusWrong = false
+    ): OrderFactory {
         $orderFactoryStub = $this
             ->getMockBuilder('EinsUndEins\SchemaOrgMailBody\Model\OrderFactory')
             ->disableOriginalConstructor()
