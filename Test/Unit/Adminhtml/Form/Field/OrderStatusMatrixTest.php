@@ -90,7 +90,7 @@ class OrderStatusMatrixTest extends TestCase
                     'there-id1_mage_status'       => 'value1',
                 ],
                 'option_extra_attrs' => [
-                    'option_' . crc32('nameidschema-value1') => 'selected="selected"',
+                    'option_hash' => 'selected="selected"',
                 ],
                 '_id'                => 'there-id1',
                 'key'                => 'there-id1',
@@ -103,7 +103,7 @@ class OrderStatusMatrixTest extends TestCase
                     '',
                 ],
                 'option_extra_attrs' => [
-                    'option_' . crc32('nameid') => 'selected="selected"',
+                    'option_hash' => 'selected="selected"',
                 ],
             ],
             [
@@ -114,7 +114,7 @@ class OrderStatusMatrixTest extends TestCase
                     'there-id3_mage_status'       => 'value3',
                 ],
                 'option_extra_attrs' => [
-                    'option_' . crc32('nameidschema-value3') => 'selected="selected"',
+                    'option_hash' => 'selected="selected"',
                 ],
                 '_id'                => 'there-id3',
                 'key'                => 'there-id3',
