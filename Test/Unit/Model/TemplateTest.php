@@ -4,8 +4,8 @@ namespace EinsUndEins\TransactionMailExtender\Test\Unit\Model;
 
 use EinsUndEins\SchemaOrgMailBody\Model\OrderFactory;
 use EinsUndEins\SchemaOrgMailBody\Model\OrderInterface as EinsUndEinsOrderInterface;
+use EinsUndEins\SchemaOrgMailBody\Model\ParcelDelivery;
 use EinsUndEins\SchemaOrgMailBody\Model\ParcelDeliveryFactory;
-use EinsUndEins\SchemaOrgMailBody\Model\ParcelDeliveryInterface;
 use EinsUndEins\SchemaOrgMailBody\Renderer\OrderRenderer;
 use EinsUndEins\SchemaOrgMailBody\Renderer\OrderRendererFactory;
 use EinsUndEins\SchemaOrgMailBody\Renderer\ParcelDeliveryRenderer;
@@ -678,12 +678,12 @@ class TemplateTest extends TestCase
      */
     private function createParcelDeliveryRendererStub(string $extra)
     {
-        $parcelDeliveryRendererStub1 = $this->createMock(ParcelDeliveryRenderer::class);
-        $parcelDeliveryRendererStub1
+        $parcelDeliveryRendererStub = $this->createMock(ParcelDeliveryRenderer::class);
+        $parcelDeliveryRendererStub
             ->method('render')
             ->willReturn('<div>eins-und-eins-library-parcel-delivery-' . $extra . '-result</div>');
 
-        return $parcelDeliveryRendererStub1;
+        return $parcelDeliveryRendererStub;
     }
 
     /**
@@ -738,16 +738,13 @@ class TemplateTest extends TestCase
             ->disableOriginalConstructor()
             ->setMethods([ 'create' ])
             ->getMock();
-        $valueMap                         = [];
+        $results                         = [];
         foreach ($parcelDeliveryStubs as $id => $parcelDeliveryStub) {
-            $valueMap[] = [
-                [ 'parcelDelivery' => $parcelDeliveryStub['parcelDelivery'] ],
-                $parcelDeliveryStub['parcelDeliveryRenderer'],
-            ];
+            $results[] = $parcelDeliveryStub['parcelDeliveryRenderer'];
         }
         $parcelDeliveryRendererFactorySub
             ->method('create')
-            ->will($this->returnValueMap($valueMap));
+            ->will($this->onConsecutiveCalls(...$results));
 
         return $parcelDeliveryRendererFactorySub;
     }
@@ -762,8 +759,8 @@ class TemplateTest extends TestCase
         $parcelDeliveryStubs = [];
         for ($i = 0; $i < $number; ++$i) {
             $parcelDeliveryStubs[$i] = [
-                'parcelDelivery'         => $this->createMock(ParcelDeliveryInterface::class),
-                'parcelDeliveryRenderer' => $this->createParcelDeliveryRendererStub($i),
+                'parcelDelivery'         => $this->createMock(ParcelDelivery::class),
+                'parcelDeliveryRenderer' => $this->createParcelDeliveryRendererStub((string)$i),
             ];
         }
 
