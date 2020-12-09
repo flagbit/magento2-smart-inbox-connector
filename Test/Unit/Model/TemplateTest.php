@@ -41,6 +41,7 @@ use Magento\Sales\Model\Order\Shipment;
 use Magento\Sales\Model\ResourceModel\Order\Shipment\Track;
 use Magento\Store\Api\Data\StoreInterface;
 use Magento\Store\Model\App\Emulation;
+use Magento\Store\Model\StoreManager;
 use Magento\Store\Model\StoreManagerInterface;
 use PHPUnit\Framework\MockObject\Matcher\InvokedCount;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -632,7 +633,7 @@ class TemplateTest extends TestCase
      */
     private function createStoreManagerStub(StoreInterface $storeStub)
     {
-        $storeManagerStub = $this->createMock(StoreManagerInterface::class);
+        $storeManagerStub = $this->createMock(StoreManager::class);
         $storeManagerStub->method('getStore')
             ->willReturn($storeStub);
 
