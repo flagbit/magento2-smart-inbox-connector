@@ -593,10 +593,17 @@ class TemplateTest extends TestCase
             ->getMock();
         $method           = $orderFactoryStub
             ->method('create')
-            ->with([ [ 'orderNumber' => 1, 'orderStatus' => '', 'shopName' => 'shop' ] ])
-            ->willReturn($orderStub);
+            ->with(
+                [
+                    'orderNumber' => 1,
+                    'orderStatus' => $orderStatus,
+                    'shopName'    => 'shop.com',
+                ]
+            );
         if ($orderStatusWrong) {
             $method->willThrowException(new InvalidArgumentException('Status is not one of the possible status.'));
+        } else {
+            $method->willReturn($orderStub);
         }
 
         return $orderFactoryStub;
@@ -620,7 +627,7 @@ class TemplateTest extends TestCase
             ->getMock();
         $orderRendererFactoryStub
             ->method('create')
-            ->with([ [ 'order' => $orderStub ] ])
+            ->with([ 'order' => $orderStub ])
             ->willReturn($orderRendererStub);
 
         return $orderRendererFactoryStub;
@@ -709,10 +716,11 @@ class TemplateTest extends TestCase
         }
 
         $method = $parcelDeliveryFactoryStub
-            ->method('create')
-            ->will($this->returnValueMap($valueMap));
+            ->method('create');
         if ($orderStatusWrong) {
             $method->willThrowException(new InvalidArgumentException('Status is not one of the possible status.'));
+        } else {
+            $method->will($this->returnValueMap($valueMap));
         }
 
         return $parcelDeliveryFactoryStub;
