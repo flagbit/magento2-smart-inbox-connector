@@ -165,10 +165,9 @@ class Template extends MageTemplate
             $orderNumber = $this->shipment->getOrderId();
             $shopName    = $this->shipment->getStore()->getName();
             foreach ($this->shipment->getTracksCollection() as $track) {
-                $deliveryName   = $track->getTitle();
-                $trackingNumber = $track->getTrackNumber();
-
                 try {
+                    $deliveryName   = $track->getTitle();
+                    $trackingNumber = $track->getTrackNumber();
                     $parcelDelivery = $this->parcelDeliveryFactory->create(
                         [
                             'deliveryName' => $deliveryName,
@@ -178,15 +177,14 @@ class Template extends MageTemplate
                             'shopName' => $shopName
                         ]
                     );
+                    $parcelDeliveryRenderer = $this->parcelDeliveryRendererFactory->create(['parcelDelivery' => $parcelDelivery]);
+                    $extension              = $parcelDeliveryRenderer->render();
+                    $text                   = self::replaceLast('</body>', $extension . '</body>', $text);
                 } catch (InvalidArgumentException $e) {
                     $this->_logger->error($e->getMessage());
 
                     continue;
                 }
-
-                $parcelDeliveryRenderer = $this->parcelDeliveryRendererFactory->create(['parcelDelivery' => $parcelDelivery]);
-                $extension              = $parcelDeliveryRenderer->render();
-                $text                   = self::replaceLast('</body>', $extension . '</body>', $text);
             }
         } catch (Exception $e) {
             $this->_logger->error($e->getMessage());
