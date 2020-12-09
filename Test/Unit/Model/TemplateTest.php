@@ -88,7 +88,7 @@ class TemplateTest extends TestCase
         $template->setTemplateId('email_id_1');
         $template->setTemplateFilter($this->createTemplateFilterStub());
         $vars = $this->getNeededVars();
-        array_merge(
+        $vars = array_merge(
             $vars,
             [
                 $this->createMageOrderStub('cancelled'),
@@ -127,7 +127,7 @@ class TemplateTest extends TestCase
         $template->setTemplateId('email_id_1');
         $template->setTemplateFilter($this->createTemplateFilterStub());
         $vars = $this->getNeededVars();
-        array_merge(
+        $vars = array_merge(
             $vars,
             [
                 $this->createShipmentStub('delivered', 3),
@@ -164,7 +164,7 @@ class TemplateTest extends TestCase
         $template->setTemplateId('email_id_1');
         $template->setTemplateFilter($this->createTemplateFilterStub());
         $vars = $this->getNeededVars();
-        array_merge(
+        $vars = array_merge(
             $vars,
             [
                 $this->createMageOrderStub('cancelled'),
@@ -195,7 +195,7 @@ class TemplateTest extends TestCase
         $template->setTemplateId('email_id_1');
         $template->setTemplateFilter($this->createTemplateFilterStub());
         $vars = $this->getNeededVars();
-        array_merge(
+        $vars = array_merge(
             $vars,
             [
                 $this->createMageOrderStub('cancelled'),
@@ -763,25 +763,6 @@ class TemplateTest extends TestCase
     }
 
     /**
-     * @param string|null $expectsException
-     * @param int|null    $numberExpectedExceptions
-     *
-     * @return MockObject|LoggerInterface
-     */
-    private function createLoggerStub(?string $expectsException, ?int $numberExpectedExceptions)
-    {
-        $loggerStub = $this->createMock(LoggerInterface::class);
-        if (!empty($expectsException)) {
-            $number = $numberExpectedExceptions ? new InvokedCount($numberExpectedExceptions) : $this->once();
-            $loggerStub->expects($number)
-                ->method('error')
-                ->with([ $expectsException ]);
-        }
-
-        return $loggerStub;
-    }
-
-    /**
      * Get an array of the needed variables for the filtering
      *
      * @return array
@@ -834,5 +815,20 @@ class TemplateTest extends TestCase
             ->willReturn('id');
 
         return $resourceTemplateStub;
+    }
+
+    /**
+     * @param TestLogger $logger
+     */
+    private function assertLoggerHasNoRecords(TestLogger $logger): void
+    {
+        $this->assertFalse($logger->hasErrorRecords());
+        $this->assertFalse($logger->hasAlertRecords());
+        $this->assertFalse($logger->hasDebugRecords());
+        $this->assertFalse($logger->hasCriticalRecords());
+        $this->assertFalse($logger->hasEmergencyRecords());
+        $this->assertFalse($logger->hasInfoRecords());
+        $this->assertFalse($logger->hasNoticeRecords());
+        $this->assertFalse($logger->hasWarningRecords());
     }
 }
