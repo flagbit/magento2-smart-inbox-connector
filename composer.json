@@ -35,7 +35,8 @@
         "magento/module-store": "^101.1"
     },
     "require-dev": {
-        "phpunit/phpunit": "^7.5"
+        "phpunit/phpunit": "^7.5",
+        "psr/log": "^1.1"
     },
     "autoload": {
         "files": [
