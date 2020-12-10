@@ -36,7 +36,7 @@ jobs:
       with:
         composer_version: 1
         args: --prefer-dist
-        command: config --global http-basic.repo.magento.com ${{ secrets.mage_user }} ${{ secrets.mage_pw }} && composer install --prefer-dist --no-progress --no-suggest ${{ matrix.composer-lowest }}
+        command: config --global http-basic.repo.magento.com ${{ secrets.mage_user }} ${{ secrets.mage_pw }} && composer update --prefer-dist --no-progress --no-suggest ${{ matrix.composer-lowest }}
 
     - name: Run test suite
       run: composer run-script test
