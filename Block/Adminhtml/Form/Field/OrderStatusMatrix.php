@@ -113,7 +113,7 @@ class OrderStatusMatrix extends AbstractFieldArray
      */
     private function getSchemaOrgStatusRenderer()
     {
-        if (!$this->schemaOrgStatusRenderer) {
+        if (null === $this->schemaOrgStatusRenderer) {
             $this->schemaOrgStatusRenderer = $this->getLayout()->createBlock(
                 SchemaOrgStatusSelect::class,
                 '',
@@ -132,7 +132,7 @@ class OrderStatusMatrix extends AbstractFieldArray
      */
     private function getMageStatusRenderer()
     {
-        if (!$this->mageStatusRenderer) {
+        if (null === $this->mageStatusRenderer) {
             $this->mageStatusRenderer = $this->getLayout()->createBlock(
                 MageStatusColumn::class,
                 '',

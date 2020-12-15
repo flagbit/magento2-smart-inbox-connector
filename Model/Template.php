@@ -43,9 +43,9 @@ class Template extends MageTemplate
     private $parcelDeliveryFactory;
     /** @var ParcelDeliveryRendererFactory $parcelDeliveryRendererFactory */
     private $parcelDeliveryRendererFactory;
-    /** @var OrderInterface */
+    /** @var OrderInterface|null */
     private $order;
-    /** @var Shipmentinterface */
+    /** @var Shipmentinterface|null */
     private $shipment;
 
     public function __construct(
@@ -122,7 +122,7 @@ class Template extends MageTemplate
     private function extendOrderData(string $text): string
     {
         try {
-            if (!$this->order) {
+            if (null === $this->order) {
                 throw new Exception('Couldn\'t get order from the email variables');
             }
 
@@ -157,7 +157,7 @@ class Template extends MageTemplate
     private function extendParcelDeliveryData(string $text): string
     {
         try {
-            if (!$this->shipment) {
+            if (null === $this->shipment) {
                 throw new Exception('Couldn\'t get shipment from the email variables');
             }
 
