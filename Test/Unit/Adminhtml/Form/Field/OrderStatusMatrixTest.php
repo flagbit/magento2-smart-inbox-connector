@@ -268,7 +268,7 @@ class OrderStatusMatrixTest extends TestCase
                 ]
             );
 
-        $statusCollectionFactoryStub = $this->getMockBuilder('Magento\Sales\Model\ResourceModel\Order\Status\CollectionFactory')
+        $statusCollectionFactoryStub = $this->getMockBuilder(CollectionFactory::class)
             ->disableOriginalConstructor()
             ->setMethods([ 'create' ])
             ->getMock();
@@ -285,7 +285,7 @@ class OrderStatusMatrixTest extends TestCase
      */
     private function createDataObjectFactoryStub(): DataObjectFactory
     {
-        $dataObjectFactoryStub = $this->getMockBuilder('Magento\Framework\DataObjectFactory')
+        $dataObjectFactoryStub = $this->getMockBuilder(DataObjectFactory::class)
             ->disableOriginalConstructor()
             ->setMethods([ 'create' ])
             ->getMock();
