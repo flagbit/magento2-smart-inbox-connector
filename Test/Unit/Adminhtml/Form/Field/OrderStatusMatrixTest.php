@@ -47,6 +47,7 @@ use Magento\Framework\View\TemplateEnginePool;
 use Magento\Sales\Model\ResourceModel\Order\Status\Collection;
 use Magento\Sales\Model\ResourceModel\Order\Status\CollectionFactory;
 use Magento\Store\Model\StoreManagerInterface;
+use PHPUnit\Framework\MockObject\MockBuilder;
 use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\LoggerInterface;
 
@@ -328,8 +329,8 @@ class OrderStatusMatrixTest extends TestCase
      */
     private function createLayoutStub()
     {
-        $mageStatusRendererStub = $this->createBlockStub();
-        $schemaOrgStatusRendererStub = $this->createBlockStub();
+        $mageStatusRendererStub = $this->createMockWithBlockInterfaceMethods(BlockInterface::class);
+        $schemaOrgStatusRendererStub = $this->createMockWithBlockInterfaceMethods(SchemaOrgStatusSelect::class);
 
         $layoutStub = $this->createMock(Layout::class);
         $layoutStub->method('createBlock')
@@ -356,11 +357,13 @@ class OrderStatusMatrixTest extends TestCase
     }
 
     /**
-     * @return BlockInterface&MockObject
+     * @param string $className
+     *
+     * @return MockObject
      */
-    private function createBlockStub()
+    private function createMockWithBlockInterfaceMethods(string $className): MockObject
     {
-        $blockStub = $this->getMockBuilder(Template::class)
+        $blockStub = $this->getMockBuilder($className)
             ->disableOriginalConstructor()
             ->setMethods([ 'calcOptionHash', 'toHtml' ])
             ->getMock();
