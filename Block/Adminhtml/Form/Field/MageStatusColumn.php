@@ -11,7 +11,7 @@ class MageStatusColumn extends AbstractBlock
         return $this->setName($value);
     }
 
-    public function toHtml()
+    public function toHtml(): string
     {
         $column = $this->getColumn();
         return '<input type="text" id="' . $this->getInputId() . '"' .

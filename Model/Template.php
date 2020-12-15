@@ -196,7 +196,7 @@ class Template extends MageTemplate
     /**
      * Fetch the order and the shipment from the from the vars
      */
-    private function fetchOrderAndShipment()
+    private function fetchOrderAndShipment(): void
     {
         $this->order    = null;
         $this->shipment = null;
@@ -252,7 +252,7 @@ class Template extends MageTemplate
      * @return array
      * @throws NoSuchEntityException
      */
-    private function getOrderStatusMatrix()
+    private function getOrderStatusMatrix(): array
     {
         $origin   = json_decode($this->getConfigValue(self::ORDER_STATUS_MATRIX));
         $remapped = [];
@@ -304,7 +304,7 @@ class Template extends MageTemplate
      * @return string|null
      * @throws NoSuchEntityException
      */
-    private function getConfigValue(string $key)
+    private function getConfigValue(string $key): ?string
     {
         return $this->scopeConfig->getValue(
             self::CONFIG_PATH . $key,

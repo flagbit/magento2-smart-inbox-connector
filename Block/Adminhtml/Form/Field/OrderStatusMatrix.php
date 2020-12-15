@@ -42,7 +42,7 @@ class OrderStatusMatrix extends AbstractFieldArray
      *
      * @return array
      */
-    public function getArrayRows()
+    public function getArrayRows(): array
     {
         $oldArrayRows = parent::getArrayRows();
 
@@ -71,7 +71,7 @@ class OrderStatusMatrix extends AbstractFieldArray
     /**
      * @inheritDoc
      */
-    protected function _prepareToRender()
+    protected function _prepareToRender(): void
     {
         $this->addColumn(
             self::MAGE_STATUS_KEY,
@@ -94,7 +94,7 @@ class OrderStatusMatrix extends AbstractFieldArray
     /**
      * @inheritDoc
      */
-    protected function _prepareArrayRow(DataObject $row)
+    protected function _prepareArrayRow(DataObject $row): void
     {
         $options     = [];
         $orderStatus = $row->getData(self::SCHEMA_ORG_STATUS_KEY);
@@ -111,7 +111,7 @@ class OrderStatusMatrix extends AbstractFieldArray
      * @return SchemaOrgStatusSelect
      * @throws LocalizedException
      */
-    private function getSchemaOrgStatusRenderer()
+    private function getSchemaOrgStatusRenderer(): SchemaOrgStatusSelect
     {
         if (null === $this->schemaOrgStatusRenderer) {
             $this->schemaOrgStatusRenderer = $this->getLayout()->createBlock(
@@ -130,7 +130,7 @@ class OrderStatusMatrix extends AbstractFieldArray
      * @return MageStatusColumn
      * @throws LocalizedException
      */
-    private function getMageStatusRenderer()
+    private function getMageStatusRenderer(): MageStatusColumn
     {
         if (null === $this->mageStatusRenderer) {
             $this->mageStatusRenderer = $this->getLayout()->createBlock(
