@@ -99,7 +99,7 @@ class Template extends MageTemplate
             return $text;
         }
 
-        $this->fetchOrderAndShipment();
+        $this->initOrderAndShipment();
 
         if (in_array($this->getId(), $this->getOrderEmails())) {
             $text = $this->extendOrderData($text);
@@ -196,7 +196,7 @@ class Template extends MageTemplate
     /**
      * Fetch the order and the shipment from the from the vars
      */
-    private function fetchOrderAndShipment(): void
+    private function initOrderAndShipment(): void
     {
         $this->order    = null;
         $this->shipment = null;
