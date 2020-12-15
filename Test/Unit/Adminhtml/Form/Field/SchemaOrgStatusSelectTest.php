@@ -35,7 +35,7 @@ class SchemaOrgStatusSelectTest extends TestCase
             $expected .= sprintf('<option value="%s" >%s</option>', $orderStatus, $orderStatus);
         }
         $expected .= '</select>';
-        $select = $this->getFilledSelect();
+        $select = $this->createFilledSelect();
 
         $this->assertEquals($expected, $select->_toHtml());
     }
@@ -47,7 +47,7 @@ class SchemaOrgStatusSelectTest extends TestCase
             . '<option value="value2" >label2</option>'
             . '<option value="value3" >label3</option>'
             . '</select>';
-        $select = $this->getFilledSelect();
+        $select = $this->createFilledSelect();
         $select->setOptions(
             [
                 [
@@ -78,7 +78,7 @@ class SchemaOrgStatusSelectTest extends TestCase
      *
      * @return SchemaOrgStatusSelect
      */
-    private function getFilledSelect(): SchemaOrgStatusSelect
+    private function createFilledSelect(): SchemaOrgStatusSelect
     {
         $select = $this->createSelect();
         $select->setName('name');
