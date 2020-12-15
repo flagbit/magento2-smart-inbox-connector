@@ -6,6 +6,7 @@ use EinsUndEins\SchemaOrgMailBody\Model\OrderInterface;
 use EinsUndEins\TransactionMailExtender\Block\Adminhtml\Form\Field\SchemaOrgStatusSelect;
 use Magento\Backend\Block\Template\Context;
 use Magento\Framework\Escaper;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class SchemaOrgStatusSelectTest extends TestCase
@@ -76,9 +77,9 @@ class SchemaOrgStatusSelectTest extends TestCase
      *   title => 'title'
      *   extraParams => 'params'
      *
-     * @return SchemaOrgStatusSelect
+     * @return SchemaOrgStatusSelect&MockObject
      */
-    private function createFilledSelect(): SchemaOrgStatusSelect
+    private function createFilledSelect()
     {
         $select = $this->createSelect();
         $select->setName('name');
@@ -90,7 +91,10 @@ class SchemaOrgStatusSelectTest extends TestCase
         return $select;
     }
 
-    private function createSelect(): SchemaOrgStatusSelect
+    /**
+     * @return SchemaOrgStatusSelect&MockObject
+     */
+    private function createSelect()
     {
         $escaperStub = $this->createMock(Escaper::class);
         $escaperStub->method('escapeHtml')

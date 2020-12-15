@@ -4,6 +4,7 @@ namespace EinsUndEins\TransactionMailExtender\Test\Unit\Adminhtml\Form\Field;
 
 use EinsUndEins\TransactionMailExtender\Block\Adminhtml\Form\Field\MageStatusColumn;
 use Magento\Backend\Block\Template\Context;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class MageStatusColumnTest extends TestCase
@@ -55,9 +56,9 @@ class MageStatusColumnTest extends TestCase
     }
 
     /**
-     * @return MageStatusColumn
+     * @return MageStatusColumn&MockObject
      */
-    private function createMageStatusColumn(): MageStatusColumn
+    private function createMageStatusColumn()
     {
         $contextStub = $this->createMock(Context::class);
 

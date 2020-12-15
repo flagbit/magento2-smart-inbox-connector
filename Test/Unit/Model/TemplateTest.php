@@ -284,9 +284,9 @@ class TemplateTest extends TestCase
      *
      * @param bool $moduleEnabled
      *
-     * @return ScopeConfigInterface
+     * @return ScopeConfigInterface&MockObject
      */
-    private function createScopeConfigStub(bool $moduleEnabled): ScopeConfigInterface
+    private function createScopeConfigStub(bool $moduleEnabled)
     {
         $scopeConfigStub = $this->createMock(ScopeConfigInterface::class);
         $scopeConfigStub->method('getValue')
@@ -333,9 +333,9 @@ class TemplateTest extends TestCase
     /**
      * Create template filter stub
      *
-     * @return Filter
+     * @return Filter&MockObject
      */
-    private function createTemplateFilterStub(): Filter
+    private function createTemplateFilterStub()
     {
         $templateFilterStub = $this->createMock(Filter::class);
 
@@ -369,9 +369,9 @@ class TemplateTest extends TestCase
      * @param string $orderStatus
      * @param int    $numberTracks
      *
-     * @return ShipmentInterface
+     * @return ShipmentInterface&MockObject
      */
-    private function createShipmentStub(string $orderStatus, int $numberTracks): ShipmentInterface
+    private function createShipmentStub(string $orderStatus, int $numberTracks)
     {
         $shipmentStub = $this->getMockBuilder(Shipment::class)
             ->disableOriginalConstructor()
@@ -398,9 +398,9 @@ class TemplateTest extends TestCase
      *
      * @param string $orderStatus
      *
-     * @return MageOrderInterface
+     * @return MageOrderInterface&MockObject
      */
-    private function createMageOrderStub(string $orderStatus): MageOrderInterface
+    private function createMageOrderStub(string $orderStatus)
     {
         $orderStub = $this->getMockBuilder(Order::class)
             ->disableOriginalConstructor()
@@ -419,9 +419,9 @@ class TemplateTest extends TestCase
     /**
      * Create store stub
      *
-     * @return StoreInterface
+     * @return StoreInterface&MockObject
      */
-    private function createStoreStub(): StoreInterface
+    private function createStoreStub()
     {
         $storeStub = $this->getMockBuilder(StoreInterface::class)
             ->disableOriginalConstructor()
@@ -461,9 +461,9 @@ class TemplateTest extends TestCase
      * @param string $title
      * @param string $trackNumber
      *
-     * @return Track
+     * @return Track&MockObject
      */
-    private function createTrackStub(string $title, string $trackNumber): Track
+    private function createTrackStub(string $title, string $trackNumber)
     {
         $trackStub = $this->getMockBuilder(Track::class)
             ->disableOriginalConstructor()
@@ -498,7 +498,7 @@ class TemplateTest extends TestCase
     /**
      * @param LoggerInterface $logger
      *
-     * @return Context|MockObject
+     * @return Context&MockObject
      */
     private function createContextStub(LoggerInterface $logger)
     {
@@ -518,7 +518,7 @@ class TemplateTest extends TestCase
     /**
      * @param ThemeInterface $designThemeStub
      *
-     * @return DesignInterface|MockObject
+     * @return DesignInterface&MockObject
      */
     private function createDesignStub(ThemeInterface $designThemeStub)
     {
@@ -536,7 +536,7 @@ class TemplateTest extends TestCase
     /**
      * @param string $templateText
      *
-     * @return Filesystem|MockObject
+     * @return Filesystem&MockObject
      */
     private function createFilesystemStub(string $templateText)
     {
@@ -559,7 +559,7 @@ class TemplateTest extends TestCase
     /**
      * @param ThemeInterface $designThemeStub
      *
-     * @return Config|MockObject
+     * @return Config&MockObject
      */
     private function createEmailConfigStub(ThemeInterface $designThemeStub)
     {
@@ -579,13 +579,13 @@ class TemplateTest extends TestCase
      * @param string                    $orderStatus
      * @param bool                      $orderStatusWrong
      *
-     * @return OrderFactory|MockObject
+     * @return OrderFactory&MockObject
      */
     private function createOrderFactoryStub(
         EinsUndEinsOrderInterface $orderStub,
         string $orderStatus,
         bool $orderStatusWrong = false
-    ): OrderFactory {
+    ) {
         $orderFactoryStub = $this
             ->getMockBuilder('EinsUndEins\SchemaOrgMailBody\Model\OrderFactory')
             ->disableOriginalConstructor()
@@ -612,9 +612,9 @@ class TemplateTest extends TestCase
     /**
      * @param EinsUndEinsOrderInterface $orderStub
      *
-     * @return OrderRendererFactory|MockObject
+     * @return OrderRendererFactory&MockObject
      */
-    private function createOrderRendererFactoryStub(EinsUndEinsOrderInterface $orderStub): OrderRendererFactory
+    private function createOrderRendererFactoryStub(EinsUndEinsOrderInterface $orderStub)
     {
         $orderRendererStub = $this->createMock(OrderRenderer::class);
         $orderRendererStub
@@ -634,7 +634,7 @@ class TemplateTest extends TestCase
     }
 
     /**
-     * @return Emulation|MockObject
+     * @return Emulation&MockObject
      */
     private function createAppEmulationStub()
     {
@@ -646,7 +646,7 @@ class TemplateTest extends TestCase
     }
 
     /**
-     * @return ThemeInterface|MockObject
+     * @return ThemeInterface&MockObject
      */
     private function createDesignThemeStub()
     {
@@ -660,7 +660,7 @@ class TemplateTest extends TestCase
     /**
      * @param StoreInterface $storeStub
      *
-     * @return StoreManagerInterface|MockObject
+     * @return StoreManagerInterface&MockObject
      */
     private function createStoreManagerStub(StoreInterface $storeStub)
     {
@@ -674,7 +674,7 @@ class TemplateTest extends TestCase
     /**
      * @param string $extra
      *
-     * @return ParcelDeliveryRenderer|MockObject
+     * @return ParcelDeliveryRenderer&MockObject
      */
     private function createParcelDeliveryRendererStub(string $extra)
     {
@@ -690,12 +690,12 @@ class TemplateTest extends TestCase
      * @param array $parcelDeliveryStubs
      * @param bool  $orderStatusWrong
      *
-     * @return ParcelDeliveryFactory|MockObject
+     * @return ParcelDeliveryFactory&MockObject
      */
     private function createParcelDeliveryFactoryStub(
         array $parcelDeliveryStubs,
         bool $orderStatusWrong = false
-    ): ParcelDeliveryFactory {
+    ) {
         $parcelDeliveryFactoryStub = $this
             ->getMockBuilder('EinsUndEins\SchemaOrgMailBody\Model\ParcelDeliveryFactory')
             ->disableOriginalConstructor()
@@ -729,9 +729,9 @@ class TemplateTest extends TestCase
     /**
      * @param array $parcelDeliveryStubs
      *
-     * @return ParcelDeliveryRendererFactory|MockObject
+     * @return ParcelDeliveryRendererFactory&MockObject
      */
-    private function createParcelDeliveryRendererFactoryStub(array $parcelDeliveryStubs): ParcelDeliveryRendererFactory
+    private function createParcelDeliveryRendererFactoryStub(array $parcelDeliveryStubs)
     {
         $parcelDeliveryRendererFactorySub = $this
             ->getMockBuilder('EinsUndEins\SchemaOrgMailBody\Renderer\ParcelDeliveryRendererFactory')
@@ -811,7 +811,7 @@ class TemplateTest extends TestCase
     }
 
     /**
-     * @return ResourceTemplate|MockObject
+     * @return ResourceTemplate&MockObject
      */
     private function createResourceTemplateStub()
     {

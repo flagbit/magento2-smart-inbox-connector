@@ -167,9 +167,9 @@ class OrderStatusMatrixTest extends TestCase
     /**
      * Create a context stub
      *
-     * @return Context
+     * @return Context&MockObject
      */
-    private function createContextStub(): Context
+    private function createContextStub()
     {
         $contextStub = $this->createMock(Context::class);
 
@@ -210,9 +210,9 @@ class OrderStatusMatrixTest extends TestCase
     /**
      * Create an element stub
      *
-     * @return AbstractElement
+     * @return AbstractElement&MockObject
      */
-    private function createElementStub(): AbstractElement
+    private function createElementStub()
     {
         $value       = [
             'removed-id1' => [
@@ -245,9 +245,9 @@ class OrderStatusMatrixTest extends TestCase
     /**
      * Create status collection factory stub, which return a status collection stub
      *
-     * @return CollectionFactory
+     * @return CollectionFactory&MockObject
      */
-    private function createStatusCollectionFactoryStub(): CollectionFactory
+    private function createStatusCollectionFactoryStub()
     {
         $statusCollectionStub = $this->createMock(Collection::class);
         $statusCollectionStub->method('toOptionArray')
@@ -281,9 +281,9 @@ class OrderStatusMatrixTest extends TestCase
     /**
      * Create data object factory stub
      *
-     * @return DataObjectFactory
+     * @return DataObjectFactory&MockObject
      */
-    private function createDataObjectFactoryStub(): DataObjectFactory
+    private function createDataObjectFactoryStub()
     {
         $dataObjectFactoryStub = $this->getMockBuilder(DataObjectFactory::class)
             ->disableOriginalConstructor()
@@ -343,7 +343,7 @@ class OrderStatusMatrixTest extends TestCase
     }
 
     /**
-     * @return LayoutInterface|MockObject
+     * @return LayoutInterface&MockObject
      */
     private function createLayoutStub()
     {
@@ -375,9 +375,9 @@ class OrderStatusMatrixTest extends TestCase
     }
 
     /**
-     * @return BlockInterface
+     * @return BlockInterface&MockObject
      */
-    private function createBlockStub(): BlockInterface
+    private function createBlockStub()
     {
         $blockStub = $this->getMockBuilder(Template::class)
             ->disableOriginalConstructor()
