@@ -478,24 +478,6 @@ class TemplateTest extends TestCase
     }
 
     /**
-     * Add getter with new stub to parent-stub
-     *
-     * @param MockObject $parentStub
-     * @param string     $name
-     * @param            $class
-     *
-     * @return MockObject
-     */
-    private function addGetterTo(MockObject $parentStub, string $name, $class): MockObject
-    {
-        $stub = $this->createMock($class);
-        $parentStub->method('get' . ucfirst($name))
-            ->willReturn($stub);
-
-        return $parentStub;
-    }
-
-    /**
      * @param LoggerInterface $logger
      *
      * @return Context&MockObject

@@ -8,7 +8,6 @@ use EinsUndEins\TransactionMailExtender\Block\Adminhtml\Form\Field\SchemaOrgStat
 use EinsUndEins\TransactionMailExtender\Test\Unit\TestCase;
 use Magento\Backend\Block\Template\Context;
 use Magento\Backend\Model\Session;
-use Magento\Cms\Block\Block;
 use Magento\Directory\Helper\Data as DirectoryHelper;
 use Magento\Framework\App\Cache\StateInterface as CacheStateInterface;
 use Magento\Framework\App\CacheInterface;
@@ -293,24 +292,6 @@ class OrderStatusMatrixTest extends TestCase
             ->willReturn(new DataObject());
 
         return $dataObjectFactoryStub;
-    }
-
-    /**
-     * Add getter with new stub to parent-stub
-     *
-     * @param MockObject $parentStub
-     * @param string     $name
-     * @param            $class
-     *
-     * @return MockObject
-     */
-    private function addGetterTo(MockObject $parentStub, string $name, $class): MockObject
-    {
-        $stub = $this->createMock($class);
-        $parentStub->method('get' . ucfirst($name))
-            ->willReturn($stub);
-
-        return $parentStub;
     }
 
     /**
