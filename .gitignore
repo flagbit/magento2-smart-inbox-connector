@@ -47,3 +47,9 @@
 composer.lock
 vendor
 app/etc/vendor_path.php
+
+# phpunit
+.phpunit.result.cache
+build/junit.xml
+build/clover.xml
+build/coverage-html
