@@ -3,10 +3,10 @@
 namespace EinsUndEins\TransactionMailExtender\Model;
 
 use EinsUndEins\SchemaOrgMailBody\Model\OrderFactory;
-use EinsUndEins\SchemaOrgMailBody\Model\ParcelDeliveryFactory;
 use EinsUndEins\SchemaOrgMailBody\Renderer\OrderRendererFactory;
 use EinsUndEins\SchemaOrgMailBody\Renderer\ParcelDeliveryRendererFactory;
 use EinsUndEins\TransactionMailExtender\Block\Adminhtml\Form\Field\OrderStatusMatrix;
+use EinsUndEins\TransactionMailExtender\Model\Factories\ParcelDeliveryFactory;
 use Exception;
 use InvalidArgumentException;
 use Magento\Email\Model\Template as MageTemplate;
@@ -166,18 +166,15 @@ class Template extends MageTemplate
             $shopName    = $this->shipment->getStore()->getName();
             foreach ($this->shipment->getTracksCollection() as $track) {
                 try {
-                    $deliveryName   = $track->getTitle();
-                    $trackingNumber = $track->getTrackNumber();
-                    $parcelDelivery = $this->parcelDeliveryFactory->create(
-                        [
-                            'deliveryName' => $deliveryName,
-                            'trackingNumber' => $trackingNumber,
-                            'orderNumber' => $orderNumber,
-                            'orderStatus' => $orderStatus,
-                            'shopName' => $shopName
-                        ]
+                    $parcelDelivery         = $this->parcelDeliveryFactory->create(
+                        $track,
+                        $orderNumber,
+                        $orderStatus,
+                        $shopName
                     );
-                    $parcelDeliveryRenderer = $this->parcelDeliveryRendererFactory->create(['parcelDelivery' => $parcelDelivery]);
+                    $parcelDeliveryRenderer = $this->parcelDeliveryRendererFactory->create(
+                        [ 'parcelDelivery' => $parcelDelivery ]
+                    );
                     $extension              = $parcelDeliveryRenderer->render();
                     $text                   = self::replaceLast('</body>', $extension . '</body>', $text);
                 } catch (InvalidArgumentException $e) {
