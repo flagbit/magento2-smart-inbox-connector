@@ -674,13 +674,11 @@ class TemplateTest extends TestCase
         $valueMap                  = [];
         foreach ($parcelDeliveryStubs as $id => $parcelDeliveryStub) {
             $valueMap[] = [
-                [
-                    'deliveryName'   => 'title' . $id,
-                    'trackingNumber' => 'track-number' . $id,
-                    'orderNumber'    => 1,
-                    'orderStatus'    => 'OrderDelivered',
-                    'shopName'       => 'shop',
-                ],
+                'title' . $id,
+                'track-number' . $id,
+                1,
+                'OrderDelivered',
+                'shop',
                 $parcelDeliveryStub['parcelDelivery'],
             ];
         }
