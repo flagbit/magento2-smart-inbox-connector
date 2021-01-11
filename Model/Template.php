@@ -142,9 +142,9 @@ class Template extends MageTemplate
             $text          = self::replaceLast('</body>', $extension . '</body>', $text);
         } catch (Exception $e) {
             $this->_logger->error($e->getMessage());
-        } finally {
-            return $text;
         }
+
+        return $text;
     }
 
     /**
@@ -188,9 +188,9 @@ class Template extends MageTemplate
             }
         } catch (Exception $e) {
             $this->_logger->error($e->getMessage());
-        } finally {
-            return $text;
         }
+
+        return $text;
     }
 
     /**
