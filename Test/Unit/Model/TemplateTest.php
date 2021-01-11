@@ -2,7 +2,7 @@
 
 namespace EinsUndEins\TransactionMailExtender\Test\Unit\Model;
 
-use EinsUndEins\SchemaOrgMailBody\Model\OrderInterface as EinsUndEinsOrderInterface;
+use EinsUndEins\SchemaOrgMailBody\Model\Order as EinsUndEinsOrder;
 use EinsUndEins\SchemaOrgMailBody\Model\ParcelDelivery;
 use EinsUndEins\SchemaOrgMailBody\Renderer\OrderRenderer;
 use EinsUndEins\SchemaOrgMailBody\Renderer\ParcelDeliveryRenderer;
@@ -240,7 +240,7 @@ class TemplateTest extends TestCase
         $filterManagerStub                = $this->createMock(FilterManager::class);
         $urlModelStub                     = $this->createMock(UrlInterface::class);
         $filterFactoryStub                = $this->createFactoryStub('Magento\Email\Model\Template\FilterFactory');
-        $orderStub                        = $this->createMock(EinsUndEinsOrderInterface::class);
+        $orderStub                        = $this->createMock(EinsUndEinsOrder::class);
         $orderFactoryStub                 = $this->createOrderFactoryStub($orderStub, $orderStatus, $orderStatusWrong);
         $orderRendererFactoryStub         = $this->createOrderRendererFactoryStub($orderStub);
         $parcelDeliveryStubs              = $this->createParcelDeliveryStubArray(3);
@@ -557,14 +557,14 @@ class TemplateTest extends TestCase
     }
 
     /**
-     * @param EinsUndEinsOrderInterface $orderStub
+     * @param EinsUndEinsOrder $orderStub
      * @param string                    $orderStatus
      * @param bool                      $orderStatusWrong
      *
      * @return OrderFactory&MockObject
      */
     private function createOrderFactoryStub(
-        EinsUndEinsOrderInterface $orderStub,
+        EinsUndEinsOrder $orderStub,
         string $orderStatus,
         bool $orderStatusWrong = false
     ) {
@@ -588,11 +588,11 @@ class TemplateTest extends TestCase
     }
 
     /**
-     * @param EinsUndEinsOrderInterface $orderStub
+     * @param EinsUndEinsOrder $orderStub
      *
      * @return OrderRendererFactory&MockObject
      */
-    private function createOrderRendererFactoryStub(EinsUndEinsOrderInterface $orderStub)
+    private function createOrderRendererFactoryStub(EinsUndEinsOrder $orderStub)
     {
         $orderRendererStub = $this->createMock(OrderRenderer::class);
         $orderRendererStub
