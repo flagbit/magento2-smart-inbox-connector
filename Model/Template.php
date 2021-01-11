@@ -2,10 +2,10 @@
 
 namespace EinsUndEins\TransactionMailExtender\Model;
 
-use EinsUndEins\SchemaOrgMailBody\Model\OrderFactory;
 use EinsUndEins\SchemaOrgMailBody\Renderer\OrderRendererFactory;
 use EinsUndEins\SchemaOrgMailBody\Renderer\ParcelDeliveryRendererFactory;
 use EinsUndEins\TransactionMailExtender\Block\Adminhtml\Form\Field\OrderStatusMatrix;
+use EinsUndEins\TransactionMailExtender\Model\Factories\OrderFactory;
 use EinsUndEins\TransactionMailExtender\Model\Factories\ParcelDeliveryFactory;
 use Exception;
 use InvalidArgumentException;
@@ -131,11 +131,10 @@ class Template extends MageTemplate
             $shopName    = $this->order->getStoreName();
 
             $order         = $this->orderFactory->create(
-                [
-                    'orderNumber' => $orderNumber,
-                    'orderStatus' => $orderStatus,
-                    'shopName'    => $shopName,
-                ]
+                $orderNumber,
+                $orderStatus,
+                $shopName
+
             );
             $orderRenderer = $this->orderRendererFactory->create([ 'order' => $order ]);
             $extension     = $orderRenderer->render();
