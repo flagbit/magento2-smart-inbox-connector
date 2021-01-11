@@ -2,9 +2,9 @@
 
 namespace EinsUndEins\TransactionMailExtender\Model;
 
-use EinsUndEins\SchemaOrgMailBody\Renderer\OrderRendererFactory;
 use EinsUndEins\TransactionMailExtender\Block\Adminhtml\Form\Field\OrderStatusMatrix;
 use EinsUndEins\TransactionMailExtender\Model\Factories\OrderFactory;
+use EinsUndEins\TransactionMailExtender\Model\Factories\OrderRendererFactory;
 use EinsUndEins\TransactionMailExtender\Model\Factories\ParcelDeliveryFactory;
 use EinsUndEins\TransactionMailExtender\Model\Factories\ParcelDeliveryRendererFactory;
 use Exception;
@@ -134,9 +134,8 @@ class Template extends MageTemplate
                 $orderNumber,
                 $orderStatus,
                 $shopName
-
             );
-            $orderRenderer = $this->orderRendererFactory->create([ 'order' => $order ]);
+            $orderRenderer = $this->orderRendererFactory->create($order);
             $extension     = $orderRenderer->render();
             $text          = self::replaceLast('</body>', $extension . '</body>', $text);
         } catch (Exception $e) {
