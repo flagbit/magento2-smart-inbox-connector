@@ -164,8 +164,11 @@ class Template extends MageTemplate
             $shopName    = $this->shipment->getStore()->getName();
             foreach ($this->shipment->getTracksCollection() as $track) {
                 try {
+                    $deliveryName   = $track->getTitle();
+                    $trackingNumber = $track->getTrackNumber();
                     $parcelDelivery         = $this->parcelDeliveryFactory->create(
-                        $track,
+                        $deliveryName,
+                        $trackingNumber,
                         $orderNumber,
                         $orderStatus,
                         $shopName
