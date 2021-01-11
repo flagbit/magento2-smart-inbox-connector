@@ -2,14 +2,14 @@
 
 namespace EinsUndEins\TransactionMailExtender\Test\Unit\Model;
 
-use EinsUndEins\SchemaOrgMailBody\Model\OrderFactory;
 use EinsUndEins\SchemaOrgMailBody\Model\OrderInterface as EinsUndEinsOrderInterface;
 use EinsUndEins\SchemaOrgMailBody\Model\ParcelDelivery;
-use EinsUndEins\SchemaOrgMailBody\Model\ParcelDeliveryFactory;
 use EinsUndEins\SchemaOrgMailBody\Renderer\OrderRenderer;
-use EinsUndEins\SchemaOrgMailBody\Renderer\OrderRendererFactory;
 use EinsUndEins\SchemaOrgMailBody\Renderer\ParcelDeliveryRenderer;
-use EinsUndEins\SchemaOrgMailBody\Renderer\ParcelDeliveryRendererFactory;
+use EinsUndEins\TransactionMailExtender\Model\Factories\OrderFactory;
+use EinsUndEins\TransactionMailExtender\Model\Factories\OrderRendererFactory;
+use EinsUndEins\TransactionMailExtender\Model\Factories\ParcelDeliveryFactory;
+use EinsUndEins\TransactionMailExtender\Model\Factories\ParcelDeliveryRendererFactory;
 use EinsUndEins\TransactionMailExtender\Model\Template;
 use EinsUndEins\TransactionMailExtender\Test\Unit\TestCase;
 use InvalidArgumentException;
@@ -568,11 +568,7 @@ class TemplateTest extends TestCase
         string $orderStatus,
         bool $orderStatusWrong = false
     ) {
-        $orderFactoryStub = $this
-            ->getMockBuilder('EinsUndEins\SchemaOrgMailBody\Model\OrderFactory')
-            ->disableOriginalConstructor()
-            ->setMethods([ 'create' ])
-            ->getMock();
+        $orderFactoryStub = $this->createMock(OrderFactory::class);
         $method           = $orderFactoryStub
             ->method('create')
             ->with(
@@ -602,11 +598,7 @@ class TemplateTest extends TestCase
         $orderRendererStub
             ->method('render')
             ->willReturn('<div>eins-und-eins-library-order-result</div>');
-        $orderRendererFactoryStub = $this
-            ->getMockBuilder('EinsUndEins\SchemaOrgMailBody\Renderer\OrderRendererFactory')
-            ->disableOriginalConstructor()
-            ->setMethods([ 'create' ])
-            ->getMock();
+        $orderRendererFactoryStub = $this->createMock(OrderRendererFactory::class);
         $orderRendererFactoryStub
             ->method('create')
             ->with([ 'order' => $orderStub ])
@@ -678,11 +670,7 @@ class TemplateTest extends TestCase
         array $parcelDeliveryStubs,
         bool $orderStatusWrong = false
     ) {
-        $parcelDeliveryFactoryStub = $this
-            ->getMockBuilder('EinsUndEins\SchemaOrgMailBody\Model\ParcelDeliveryFactory')
-            ->disableOriginalConstructor()
-            ->setMethods([ 'create' ])
-            ->getMock();
+        $parcelDeliveryFactoryStub = $this->createMock(ParcelDeliveryFactory::class);
         $valueMap                  = [];
         foreach ($parcelDeliveryStubs as $id => $parcelDeliveryStub) {
             $valueMap[] = [
@@ -715,12 +703,8 @@ class TemplateTest extends TestCase
      */
     private function createParcelDeliveryRendererFactoryStub(array $parcelDeliveryStubs)
     {
-        $parcelDeliveryRendererFactorySub = $this
-            ->getMockBuilder('EinsUndEins\SchemaOrgMailBody\Renderer\ParcelDeliveryRendererFactory')
-            ->disableOriginalConstructor()
-            ->setMethods([ 'create' ])
-            ->getMock();
-        $results                         = [];
+        $parcelDeliveryRendererFactorySub = $this->createMock(ParcelDeliveryRendererFactory::class);
+        $results                          = [];
         foreach ($parcelDeliveryStubs as $id => $parcelDeliveryStub) {
             $results[] = $parcelDeliveryStub['parcelDeliveryRenderer'];
         }
