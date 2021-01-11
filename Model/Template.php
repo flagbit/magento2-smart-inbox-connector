@@ -3,10 +3,10 @@
 namespace EinsUndEins\TransactionMailExtender\Model;
 
 use EinsUndEins\SchemaOrgMailBody\Renderer\OrderRendererFactory;
-use EinsUndEins\SchemaOrgMailBody\Renderer\ParcelDeliveryRendererFactory;
 use EinsUndEins\TransactionMailExtender\Block\Adminhtml\Form\Field\OrderStatusMatrix;
 use EinsUndEins\TransactionMailExtender\Model\Factories\OrderFactory;
 use EinsUndEins\TransactionMailExtender\Model\Factories\ParcelDeliveryFactory;
+use EinsUndEins\TransactionMailExtender\Model\Factories\ParcelDeliveryRendererFactory;
 use Exception;
 use InvalidArgumentException;
 use Magento\Email\Model\Template as MageTemplate;
@@ -172,7 +172,7 @@ class Template extends MageTemplate
                         $shopName
                     );
                     $parcelDeliveryRenderer = $this->parcelDeliveryRendererFactory->create(
-                        [ 'parcelDelivery' => $parcelDelivery ]
+                        $parcelDelivery
                     );
                     $extension              = $parcelDeliveryRenderer->render();
                     $text                   = self::replaceLast('</body>', $extension . '</body>', $text);
