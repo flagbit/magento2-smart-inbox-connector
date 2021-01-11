@@ -11,20 +11,23 @@ class ParcelDeliveryFactoryTest extends TestCase
 {
     public function testCreate(): void
     {
-        $deliveryName = 'deliveryName';
+        $deliveryName   = 'deliveryName';
         $trackingNumber = 'trackingNumber';
-        $orderNumber = 'orderNumber';
-        $orderStatus = 'OrderDelivered';
-        $shopName = 'shop.com';
+        $orderNumber    = 'orderNumber';
+        $orderStatus    = 'OrderDelivered';
+        $shopName       = 'shop.com';
 
-        $track = $this->createMock(Track::class);
+        $track = $this->getMockBuilder(Track::class)
+            ->disableOriginalConstructor()
+            ->setMethods([ 'getTitle', 'getTrackNumber' ])
+            ->getMock();
         $track->method('getTitle')
             ->willReturn($deliveryName);
         $track->method('getTrackNumber')
             ->willReturn($trackingNumber);
 
         $parcelDeliveryFactory = new ParcelDeliveryFactory();
-        $parcelDelivery = $parcelDeliveryFactory->create($track, $orderNumber, $orderStatus, $shopName);
+        $parcelDelivery        = $parcelDeliveryFactory->create($track, $orderNumber, $orderStatus, $shopName);
 
         $this->assertInstanceOf(ParcelDelivery::class, $parcelDelivery);
 
