@@ -11,7 +11,7 @@ class OrderFactoryTest extends TestCase
     public function testCreate(): void
     {
         $orderNumber = 'orderNumber';
-        $orderStatus = 'orderStatus';
+        $orderStatus = 'OrderProblem';
         $shopName    = 'shop.com';
 
         $orderFactory = new OrderFactory();

@@ -14,7 +14,7 @@ class ParcelDeliveryFactoryTest extends TestCase
         $deliveryName = 'deliveryName';
         $trackingNumber = 'trackingNumber';
         $orderNumber = 'orderNumber';
-        $orderStatus = 'orderStatus';
+        $orderStatus = 'OrderDelivered';
         $shopName = 'shop.com';
 
         $track = $this->createMock(Track::class);
