@@ -88,7 +88,7 @@ class TemplateTest extends TestCase
         $scopeConfigStub = $this->createScopeConfigStub(true);
 
         $logger   = new TestLogger();
-        $template = $this->createTemplate($scopeConfigStub, $templateText, $logger, 'orderCancelled');
+        $template = $this->createTemplate($scopeConfigStub, $templateText, $logger, 'OrderCancelled');
         $template->setTemplateId('email_id_1');
         $template->setTemplateFilter($this->createTemplateFilterStub());
         $vars = $this->getNeededVars();
@@ -163,7 +163,7 @@ class TemplateTest extends TestCase
             $scopeConfigStub,
             $templateText,
             $logger,
-            'orderCancelled'
+            'OrderCancelled'
         );
         $template->setTemplateId('email_id_1');
         $template->setTemplateFilter($this->createTemplateFilterStub());
@@ -193,7 +193,7 @@ class TemplateTest extends TestCase
             $scopeConfigStub,
             $expected,
             $logger,
-            'orderCancelled',
+            'OrderCancelled',
             true
         );
         $template->setTemplateId('email_id_1');
