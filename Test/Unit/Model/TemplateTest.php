@@ -44,11 +44,15 @@ use Magento\Store\Model\App\Emulation;
 use Magento\Store\Model\StoreManager;
 use Magento\Store\Model\StoreManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
+use Prophecy\Prophet;
 use Psr\Log\LoggerInterface;
 use Psr\Log\Test\TestLogger;
 
 class TemplateTest extends TestCase
 {
+    /** @var Prophet $prophet */
+    private $prophet;
+
     public function testProcessTemplateModuleNotEnabled(): void
     {
         $scopeConfigStub = $this->createScopeConfigStub(false);
@@ -210,6 +214,16 @@ class TemplateTest extends TestCase
         $this->assertEquals($expected, $actual);
     }
 
+    protected function setUp(): void
+    {
+        $this->prophet = new Prophet;
+    }
+
+    protected function tearDown(): void
+    {
+        $this->prophet->checkPredictions();
+    }
+
     /**
      * @param ScopeConfigInterface $scopeConfigStub
      * @param string               $templateText
@@ -317,9 +331,9 @@ class TemplateTest extends TestCase
                             1,
                             '[' .
                             '{"mage_status": "cancelled",' .
-                            '"schema_org_status": "orderCancelled"},' .
+                            '"schema_org_status": "OrderCancelled"},' .
                             '{"mage_status": "delivered",' .
-                            '"schema_org_status": "orderDelivered"},' .
+                            '"schema_org_status": "OrderDelivered"},' .
                             '{"mage_status": "not-existent",' .
                             '"schema_org_status": "notExistent"}]',
                         ],
@@ -558,8 +572,8 @@ class TemplateTest extends TestCase
 
     /**
      * @param EinsUndEinsOrder $orderStub
-     * @param string                    $orderStatus
-     * @param bool                      $orderStatusWrong
+     * @param string           $orderStatus
+     * @param bool             $orderStatusWrong
      *
      * @return OrderFactory&MockObject
      */
@@ -671,27 +685,25 @@ class TemplateTest extends TestCase
         bool $orderStatusWrong = false
     ) {
         $parcelDeliveryFactoryStub = $this->createMock(ParcelDeliveryFactory::class);
-        $valueMap                  = [];
+        if ($orderStatusWrong) {
+            $parcelDeliveryFactoryStub->method('create')
+                ->willThrowException(new InvalidArgumentException('Status is not one of the possible status.'));
+
+            return $parcelDeliveryFactoryStub;
+        }
+
+        $parcelDeliveryFactoryStub = $this->prophet->prophesize(ParcelDeliveryFactory::class);
         foreach ($parcelDeliveryStubs as $id => $parcelDeliveryStub) {
-            $valueMap[] = [
+            $parcelDeliveryFactoryStub->create(
                 'title' . $id,
                 'track-number' . $id,
                 1,
                 'OrderDelivered',
-                'shop',
-                $parcelDeliveryStub['parcelDelivery'],
-            ];
+                'shop')
+                ->willReturn($parcelDeliveryStub['parcelDelivery']);
         }
 
-        $method = $parcelDeliveryFactoryStub
-            ->method('create');
-        if ($orderStatusWrong) {
-            $method->willThrowException(new InvalidArgumentException('Status is not one of the possible status.'));
-        } else {
-            $method->will($this->returnValueMap($valueMap));
-        }
-
-        return $parcelDeliveryFactoryStub;
+        return $parcelDeliveryFactoryStub->reveal();
     }
 
     /**
