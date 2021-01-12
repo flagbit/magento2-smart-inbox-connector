@@ -39,6 +39,7 @@
         "magento/module-store": "^101.1"
     },
     "require-dev": {
+        "phpspec/prophecy-phpunit": "^2.0",
         "phpunit/phpunit": "^9.5",
         "psr/log": "^1.1"
     },
