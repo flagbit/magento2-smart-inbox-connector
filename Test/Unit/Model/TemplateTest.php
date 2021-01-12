@@ -586,11 +586,9 @@ class TemplateTest extends TestCase
         $method           = $orderFactoryStub
             ->method('create')
             ->with(
-                [
-                    'orderNumber' => 1,
-                    'orderStatus' => $orderStatus,
-                    'shopName'    => 'shop.com',
-                ]
+                    '1',
+                    $orderStatus,
+                    'shop.com',
             );
         if ($orderStatusWrong) {
             $method->willThrowException(new InvalidArgumentException('Status is not one of the possible status.'));
@@ -615,7 +613,7 @@ class TemplateTest extends TestCase
         $orderRendererFactoryStub = $this->createMock(OrderRendererFactory::class);
         $orderRendererFactoryStub
             ->method('create')
-            ->with([ 'order' => $orderStub ])
+            ->with($orderStub)
             ->willReturn($orderRendererStub);
 
         return $orderRendererFactoryStub;
