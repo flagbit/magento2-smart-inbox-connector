@@ -1,0 +1,73 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <tab id="1und1"
+             translate="label"
+             sortOrder="10">
+            <label>1&amp;1</label>
+        </tab>
+        <section id="transaction_mail_extender"
+                 translate="label"
+                 sortOrder="1"
+                 showInDefault="1"
+                 showInWebsite="1"
+                 showInStore="1">
+            <class>separator-top</class>
+            <label>Transaction Mail Extender</label>
+            <tab>1und1</tab>
+            <resource>EinsUndEins_TransactionMailExtender::config</resource>
+            <group id="general"
+                   translate="label"
+                   type="text"
+                   sortOrder="1"
+                   showInDefault="1"
+                   showInWebsite="1"
+                   showInStore="1">
+                <label>General Configuration</label>
+                <field id="enable"
+                       translate="label"
+                       type="select"
+                       sortOrder="10"
+                       showInDefault="1"
+                       showInWebsite="1"
+                       showInStore="1">
+                    <label>Module Enable</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="order_status_matrix"
+                       translate="label"
+                       sortOrder="20"
+                       showInDefault="1"
+                       showInWebsite="1"
+                       showInStore="1">
+                    <label>Order Status Matrix</label>
+                    <frontend_model>EinsUndEins\TransactionMailExtender\Block\Adminhtml\Form\Field\OrderStatusMatrix</frontend_model>
+                    <backend_model>Magento\Config\Model\Config\Backend\Serialized\ArraySerialized</backend_model>
+                </field>
+                <field id="order_emails"
+                       translate="label"
+                       type="multiselect"
+                       sortOrder="30"
+                       showInDefault="1"
+                       showInWebsite="1"
+                       showInStore="1">
+                    <label>Order Emails</label>
+                    <source_model>EinsUndEins\TransactionMailExtender\Block\Adminhtml\Form\Field\MultiSelectEmail</source_model>
+                    <comment>The email templates which should be extended with order information.</comment>
+                </field>
+                <field id="parcel_delivery_emails"
+                       translate="label"
+                       type="multiselect"
+                       sortOrder="40"
+                       showInDefault="1"
+                       showInWebsite="1"
+                       showInStore="1">
+                    <label>Parcel Delivery Emails</label>
+                    <source_model>EinsUndEins\TransactionMailExtender\Block\Adminhtml\Form\Field\MultiSelectEmail</source_model>
+                    <comment>The email templates which should be extended with shipping information.</comment>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>

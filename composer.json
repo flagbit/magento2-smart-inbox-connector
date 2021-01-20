@@ -1,0 +1,63 @@
+{
+    "name": "flagbit/magento2-transaction-mail-extender",
+    "description": "Extends Magento 2 transaction mails with a Schema.org conform HTML content",
+    "type": "magento2-module",
+    "authors": [
+        {
+            "name": "Michael Vogel",
+            "email": "michael.vogel@flagbit.de",
+            "role": "Developer"
+        }
+    ],
+    "homepage": "https://github.com/flagbit/magento2-transaction-mail-extender",
+    "keywords": [
+        "magento",
+        "magento2",
+        "transaction",
+        "mail",
+        "extender",
+        "schema.org"
+    ],
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "https://repo.magento.com/"
+        }
+    ],
+    "require": {
+        "php": ">=7.3.0",
+        "ext-json": "*",
+        "flagbit/schemaorg-email-body": "^0.2.0",
+        "magento/framework": "^103.0",
+        "magento/magento-composer-installer": "^0.1.13",
+        "magento/module-backend": "^102.0",
+        "magento/module-config": "^101.2",
+        "magento/module-directory": "^100.4",
+        "magento/module-email": "^101.1",
+        "magento/module-media-storage": "^100.4",
+        "magento/module-sales": "^103.0",
+        "magento/module-store": "^101.1"
+    },
+    "require-dev": {
+        "phpspec/prophecy-phpunit": "^2.0",
+        "phpunit/phpunit": "^9.5",
+        "psr/log": "^1.1"
+    },
+    "autoload": {
+        "files": [
+            "registration.php"
+        ],
+        "psr-4": {
+            "EinsUndEins\\TransactionMailExtender\\": ""
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "scripts": {
+        "pre-install-cmd": "@composer-install-fix",
+        "pre-update-cmd": "@composer-install-fix",
+        "composer-install-fix": "mkdir -p ./app/etc && cp ./build/magento_vendor_path.php ./app/etc/vendor_path.php",
+        "test": "./vendor/bin/phpunit"
+    }
+}
