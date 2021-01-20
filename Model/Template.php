@@ -128,7 +128,7 @@ class Template extends MageTemplate
 
             $orderNumber = $this->order->getId();
             $orderStatus = $this->getSchemaOrderStatusFromOrder($this->order);
-            $shopName    = $this->order->getStoreName();
+            $shopName    = $this->getShopName();
 
             $order         = $this->orderFactory->create(
                 $orderNumber,
@@ -161,7 +161,8 @@ class Template extends MageTemplate
 
             $orderStatus = $this->getSchemaOrderStatusFromOrder($this->shipment->getOrder());
             $orderNumber = $this->shipment->getOrderId();
-            $shopName    = $this->shipment->getStore()->getName();
+            $shopName    = $this->getShopName();
+
             foreach ($this->shipment->getTracksCollection() as $track) {
                 try {
                     $deliveryName   = $track->getTitle();
@@ -292,6 +293,21 @@ class Template extends MageTemplate
     private function getModuleEnabled(): bool
     {
         return (bool)$this->getConfigValue(self::MODULE_ENABLED);
+    }
+
+    /**
+     * Get the name of the shop
+     *
+     * @return string|null
+     * @throws NoSuchEntityException
+     */
+    private function getShopName(): ?string
+    {
+        return $this->scopeConfig->getValue(
+            'general/store_information/name',
+            'store',
+            $this->storeManager->getStore()->getId()
+        );
     }
 
     /**
