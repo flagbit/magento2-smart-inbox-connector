@@ -337,6 +337,12 @@ class TemplateTest extends TestCase
                             '{"mage_status": "not-existent",' .
                             '"schema_org_status": "notExistent"}]',
                         ],
+                        [
+                            'general/store_information/name',
+                            'store',
+                            1,
+                            'shop.com'
+                        ]
                     ]
                 )
             );
@@ -424,8 +430,6 @@ class TemplateTest extends TestCase
             ->willReturn(1);
         $orderStub->method('getStatus')
             ->willReturn($orderStatus);
-        $orderStub->method('getStoreName')
-            ->willReturn('shop.com');
 
         return $orderStub;
     }
@@ -462,8 +466,6 @@ class TemplateTest extends TestCase
         $storeStub->method('getId')
             ->willReturn(1);
         $storeStub->method('getFrontendName')
-            ->willReturn('shop');
-        $storeStub->method('getName')
             ->willReturn('shop');
 
         return $storeStub;
@@ -697,7 +699,7 @@ class TemplateTest extends TestCase
                 'track-number' . $id,
                 1,
                 'OrderDelivered',
-                'shop')
+                'shop.com')
                 ->willReturn($parcelDeliveryStub['parcelDelivery']);
         }
 
