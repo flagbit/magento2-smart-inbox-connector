@@ -2,6 +2,7 @@
     "name": "flagbit/magento2-transaction-mail-extender",
     "description": "Extends Magento 2 transaction mails with a Schema.org conform HTML content",
     "type": "magento2-module",
+    "license": "MIT",
     "authors": [
         {
             "name": "Michael Vogel",
