@@ -14,7 +14,7 @@
                  showInWebsite="1"
                  showInStore="1">
             <class>separator-top</class>
-            <label>Transaction Mail Extender</label>
+            <label>Magento2 Smart Inbox Connector</label>
             <tab>1und1</tab>
             <resource>EinsUndEins_TransactionMailExtender::config</resource>
             <group id="general"

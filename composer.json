@@ -1,5 +1,5 @@
 {
-    "name": "flagbit/magento2-transaction-mail-extender",
+    "name": "flagbit/magento2-smart-inbox-connector",
     "description": "Extends Magento 2 transaction mails with a Schema.org conform HTML content",
     "type": "magento2-module",
     "license": "MIT",
@@ -10,7 +10,7 @@
             "role": "Developer"
         }
     ],
-    "homepage": "https://github.com/flagbit/magento2-transaction-mail-extender",
+    "homepage": "https://github.com/flagbit/magento2-smart-inbox-connector",
     "keywords": [
         "magento",
         "magento2",
