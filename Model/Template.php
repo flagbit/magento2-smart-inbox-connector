@@ -133,7 +133,7 @@ class Template extends MageTemplate
             $order         = $this->orderFactory->create(
                 $orderNumber,
                 $orderStatus,
-                $shopName
+                $shopName ?? ''
             );
             $orderRenderer = $this->orderRendererFactory->create($order);
             $extension     = $orderRenderer->render();
@@ -172,7 +172,7 @@ class Template extends MageTemplate
                         $trackingNumber,
                         $orderNumber,
                         $orderStatus,
-                        $shopName
+                        $shopName ?? ''
                     );
                     $parcelDeliveryRenderer = $this->parcelDeliveryRendererFactory->create(
                         $parcelDelivery
